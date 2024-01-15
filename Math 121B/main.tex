@@ -1,0 +1,2240 @@
+\documentclass{article}
+\usepackage{commands, xcolor}
+\renewcommand{\familydefault}{\sfdefault}
+\newcommand{\red}{\textcolor{red}}
+\newcommand{\bl}{\textcolor{cyan}}
+\DeclareMathOperator{\tr}{tr}
+\usepackage{nicematrix}
+\newcommand{\vect}[2]{\begin{pmatrix} #1 \\ #2\end{pmatrix}}
+\title{Math 121B Lecture Notes}
+\author{Timothy Cho}
+\date{December 2023}
+
+\begin{document}
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+            
+        \Huge
+        \textbf{UC Irvine Math 121B Fall 2023}
+        
+        \vspace{0.1 cm}
+        \huge
+        \textbf{Linear Algebra II}
+        \vspace{0.4cm}
+            
+        \vspace{1.5cm}
+        \Large    
+        \textsf{Professor: Vladimir Baranovsky}
+
+        \textsf{Teaching Assistant: Fei Xiang}
+        
+        \textsf{Notes: Timothy Cho}
+            
+        \vfill
+            
+
+            
+        \vspace{0.8cm}
+            
+
+        \Large
+        December 2023
+
+        Lecture Note Series \#\textbf{3}
+            
+    \end{center}
+\end{titlepage}
+\section*{Introduction}
+These notes come from both the lecture and the discussion. Sections are numbered chronologically (not by content) using the following scheme by taking the section number modulo $10$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}\hline
+Date & Lecture & Discussion \\ \hline
+Monday & $0$ & $1$  \\
+Tuesday & $2$ & $3$ \\
+Wednesday & $4$ & $5$ \\
+Thursday & $6$ & $7$ \\
+Friday & $8$ & $9$ \\ \hline
+\end{tabular}
+\end{center}
+Additionally, the first digit (first two if the section number is three digits long) denotes the week that the lecture/discussion occurred in. It should be noted that not every lecture is recorded in these notes: some lectures were skipped, but despite this the notes should be comprehensible.
+
+The text used was \textit{Linear Algebra Done Right}, 3e, by Sheldon Axler. Numbers in [brackets] refer to sections in this text. Homework exercises assigned this term are found at the back of these notes.
+
+\setc9
+\section{Basic Notions (I)}
+We should be familiar with this theorem from Math 121A.
+\begin{theorem}[Rank-Nullity Theorem]
+Let $T: V\to W$ be a linear map, where $V$ is finite-dimensional. Then
+$$\dim V = \dim\ker T + \dim\im T.$$
+\end{theorem}
+\begin{proof}
+Choose a basis $\{u_i\}_1^n$ of $\ker T$, and extend it to a basis $\{u_i\}_1^n \cup \{v_j\}_1^k$ of $V$. Set $\gen{v_1, \ldots, v_k} =: V'$, so that $V = V' \oplus \ker T$. By the First Isomorphism Theorem, $V' \cong \im T$, so the claim is proven by checking dimensions.
+\end{proof}
+Now, take the basis of $V$ as given in the above proof, and choose this basis of $W$:
+$$\{Tv_i\}_1^k \cup \{w_j\}_{k+1}^{k+m},$$
+so that $\dim W = k+m$. Then the matrix of $T$ is
+$$M = \begin{pmatrix}
+    Tv_1 & Tv_2 & \cdots & Tv_k & 0 & 0 & \cdots & 0
+\end{pmatrix}.$$
+Our main topic of study in this course is the \textit{diagonalizability} of such matrices $M$: i.e., is there a ``nice" basis such that $T$ has a very simple matrix $M$? Of course, this is not always the case, so we give conditions to see when this is possible.
+\setc{12}
+\section{Basic Notions (II)}
+The following should be review from Math 121A. Let $\F$ denote a field.
+\begin{proposition}
+Given a matrix $A\in M_{m\times n}(\F)$, we have $\mathrm{rank}(A) \leq \min(m, n)$.
+\end{proposition}
+\begin{proof}
+Consider the associated transformation $T_A: \F^n \to \F^m$.
+\end{proof}
+
+The following definitions will be used often.
+\begin{definition}
+Let $\set{x_i}_1^n$ be a set of vectors. We say that $\set{x_i}$ is \textit{linearly independent} if
+$$a_1x_1 + \cdots + a_nx_n = 0 \textsf{ implies } a_i = 0$$
+for all $i\leq n$.
+\end{definition}
+\begin{definition}
+Let $V$ be a vector space. A set $B\subseteq V$ is a \textit{basis} of $V$ is $B$ is linearly independent and $\gen B = V$.
+\end{definition}
+\begin{example}
+Let $T: V\to W$, and define $G_T = \{(v, Tv): v\in V\}\subseteq V\times W$. We claim that $T$ is linear if and only if $G_T\leq V\times W$.
+\end{example}
+\begin{proof}
+$(\implies)$: Suppose $T$ is linear. We verify the subspace criterion for $G_T$. We notice that if $(u, Tu), (v, Tv)\in G_T$, by linearity of $T$ we have
+$$(u, Tu) + (v, Tv) = (u+v, Tu+Tv) = (u+v, T(u+v)) \in G_T,$$
+so $G_T$ is additively closed. Note that $(0, T(0)) = (0,0)\in G_T$, so $G_T$ has an additive identity. Finally, by linearity of $T$ we have for every $c\in\F$ and $(u, Tu)\in G_T$, $$c(u, Tu) = (cu, Tu) = (cu, T(cu)) \in G_T,$$
+so $G_T$ is scalar-closed. Hence $G_T\leq V\times W$.
+
+$(\impliedby)$: Suppose $G_T\leq V\times W$. Pick vectors $u, v\in V$. We note that $(u, Tu), (v, Tv)\in G_T$, so that by additive closure $(u, Tu) + (v, Tv) = (u+v, Tu+Tv)\in G_T$. By definition of $G_T$, we see that $T(u+v) = Tu+Tv$, so $T$ is an additive group homomorphism.
+
+Now, choose $\alpha\in \F$. Then by scalar closure, we have $(\alpha u, \alpha Tu)\in G_T$. But this implies $T(\alpha u) = \alpha Tu$, hence $T$ is linear.
+\end{proof}
+
+Here is an exercise in using the First Isomorphism Theorem.
+\begin{example}
+Let $\phi: V\to\F$ be linear and suppose $\phi\neq 0$. We show that $\dim(V/\ker \phi) = 1$.
+\end{example}
+\begin{proof}
+The First Isomorphism Theorem tells us that $V/\ker \phi \cong \im \phi$. Since $\phi\neq 0$, $\phi$ must have rank $1$. But $\dim_\F \F = 1$, so $\phi$ is surjective. This implies $\im\phi = \F$, so $\dim(V/\ker \phi) = \dim \F = 1$.
+\end{proof}
+\section{Eigenvalues and Eigenvectors}
+Let $T: V\to V$be a linear map with $\dim V < \infty$. Assume there exists a basis $\{e_i\}_1^n$ of $V$ such that $T$ has a diagonal matrix $A_T := \diag(a_1, \ldots, a_n)$; i.e., $Te_i = a_ie_i$ for all $i\leq n$. This is equivalent to saying $(T - a_iI)e_i = 0$, so we make the following definition.
+\begin{definition}
+Let $v\neq 0$ and let $T\in\lin(V)$, where $V$ has ground field $\F$. If there exists some $\lambda\in\F$ such that $Tv = \lambda v$, then $\lambda$ is an \textit{eigenvalue} of $T$, and $v$ is a \textit{$\lambda$-eigenvector} of $T$.
+\end{definition}
+
+The following theorem thus follows immediately from our discussion above.
+\begin{theorem}
+Let $T: V\to V$. Then $T$ is diagonalizable if and only if $V$ has a basis of eigenvectors of $T$.
+\end{theorem}
+
+We recall the following facts about eigenvectors.
+\newpage
+\begin{proposition}
+Let $v\in V$ and $\lambda\in\F$, and let $T\in\lin(V)$. If $v$ is a $\lambda$-eigenvector of $T$, then the following hold:
+\begin{enumerate}
+    \item $v\in \ker(T-\lambda I)$;
+    \item $T-\lambda I$ is not injective;
+    \item $T-\lambda I$ is not surjective;
+    \item $T-\lambda I$ is not bijective.
+\end{enumerate}
+\end{proposition}
+\begin{remark}
+Note that eigenvectors may not exist. Take $V = \R^2$ over $\R$, and let $T\in\lin(\R^2)$ be defined by the matrix
+$$A_T = \matfour{\cos\alpha}{-\sin\alpha}{\sin \alpha}{\cos\alpha},$$
+which is a rotation matrix with angle $\alpha$. Then, $T$ only has eigenvectors if $\alpha\in\pi\Z$.
+\end{remark}
+
+\begin{theorem}
+If $T: V\to V$ is linear, and $\set{\lambda_i}_1^n$ are distinct eigenvalues with corresponding eigenvectors $\set{v_i}_1^n$, then $\set{v_i}_1^n$ is linearly independent.
+\end{theorem}
+\begin{proof}
+For contradiction, suppose that $\set{v_i}_1^n$ is linearly dependent. Let $k$ be the smallest index such that $v_k\in\gen{v_1,\ldots, v_{k-1}}$. This is equivalent to saying $v_k = a_1 v_1 + \cdots + a_{k-1} v_{k-1}$ for some nontrivial constants $a_j$, $j\leq k-1$. Hence
+$$Tv_k = a_1Tv_1 + \cdots + a_{k-1}Tv_{k-1} \iff \lambda_kv_k = a_1\lambda_1v_1 + \cdots + a_{k-1} \lambda_{k-1}v_{k-1}.$$
+This implies
+$$0 = a_1(\lambda_k-\lambda_1)v_1 + \cdots + a_{k-1}(\lambda_k - \lambda_{k-1})v_{k-1},$$
+but each $\lambda_k-\lambda_j$ is nonzero due to distinctness. But this violates the minimality of $k$ if the $a_j$ are indeed nontrivial, so the set $\set{v_i}_1^n$ must be linearly independent.
+\end{proof}
+We thus have some corollaries:
+\begin{corollary}
+If $\dim V = n$, then $T\in\lin(V)$ has at most $n$ distinct eigenvalues.
+\end{corollary}
+\begin{corollary}
+If $\dim V = n$ and $T\in\lin(V)$ has $n$ eigenvalues, then $V$ has a basis of eigenvectors of $T$.
+\end{corollary}
+\setc{16}
+\section{Invariant Subspaces: Worked Examples}
+[Invariant subspaces are defined in Definition 18.1, but this discussion section was ahead of the lecture.]
+\begin{example}
+Let $T\in\lin(V)$, and let $\set{U_i}_1^n$ be a set of subspaces of $V$ invariant under $T$. Prove that $U_1 + \cdots + U_n$ is invariant under $T$.
+\end{example}
+\begin{proof}
+From each $U_i$, pick a $u_i\in U_i$. Then $Tu_i \in U_i$ by invariance of each $U_i$, so that by linearity, $T\sum u_i  = \sum Tu_i \in \sum U_i$, so we are done.
+\end{proof}
+\begin{example}
+Define $T\in\lin(\R^2)$ by $(x,y)\mapsto (y,x)$ Find all eigenvalues and eigenvectors of $T$.
+\end{example}
+\begin{solution}
+Suppose $(x,y)\neq 0$ is an eigenvector of $T$ with eigenvalue $\lambda$. Then $T(x,y) = \lambda(x,y) = (y,x)$, so we have the system of equations $y = \lambda x$, $x=\lambda y$, so $y = \lambda^2y$. We consider two cases. \newpage
+
+\textit{Case I:} $y=0$. In this case, we have $x=\lambda y = 0$, which is impossible as $(x,y)\neq 0$.
+
+\textit{Case II:} $y\neq 0$. In this case, we obtain $\lambda^2 = 1\implies \lambda = \pm 1$. If $\lambda = 1$, we have $y=x$, so $\lambda = 1$ has the associated eigenvectors $\gen{(1, 1)}$. Similarly, $\lambda =- 1$ has the associated eigenvectors $\gen{(1, -1)}$.
+\end{solution}
+\begin{example}
+Suppose $V$ is finite-dimensional and $T\in\lin(V)$ is such that every subspace of $V$ with dimension $(\dim V-1)$ is invariant under $T$. Prove that $T$ is a scalar multiple of the identity operator $I$.
+\end{example}
+\begin{proof}
+Assume for contradiction that $T\neq \lambda I$ for any $\lambda\in\F$. Then there exists some $v\in V\setminus 0$ such that $Tv$ is not a multiple of $v$, i.e., $\set{v, Tv}$ is linearly independent. Hence, we extend this set to a basis $\beta$ of $V$ (letting $v =: v_1$ and $Tv =: v_2$): $\beta = \set{v_i}_1^n$, where $\dim V =: n$. Now $\gen{v_1, v_3, v_4, \ldots, v_n}$ is a subspace of dimension $n-1$, but by linear independence of $\beta$, $Tv = v_2\not\in \gen{v_1, v_3, v_4, \ldots, v_n}$. But $v= v_1$, so $Tv_1 = Tv = v_2$, but we have a contradiction as by invariance we have $Tv_1 \in \gen{v_1, v_3, v_4, \ldots, v_n}$. Hence, $T = \lambda I$ for some $\lambda\in\F$.
+\end{proof}
+\section{Invariant Subspaces (I)}
+We now define what it means for a subspace to be \textit{invariant}.
+\begin{definition}
+Let $T\in\lin(V)$. A subspace $W\leq V$ is $T$-\textit{invariant} if $T(W)\leq W$; i.e., if $Tw \in W$ for all $w\in W$.
+\end{definition}
+
+Clearly, $0$ and $V$ are $T$-invariant for any $T\in \lin(V)$.
+\begin{example}
+Let $T = \matfour 0100$. Then $\gen{(1,0)}$ is $T$-invariant.
+\end{example}
+Suppose $W<V$ is $T$-invariant. Fix $W = \gen{v_1, \ldots, v_k}$, where the $v_i$ form a basis of $W$. We extend this to a basis $\set{v_i}_{i=1}^n$ of $V$. Since $Tv_i \in W$ for all $i\leq k$, we know that $Tv_i\in \gen{v_1, \ldots, v_k}$, so the matrix of $T$ is of this form:
+$$T = \begin{pmatrix}
+* & * \\ 0 & *
+\end{pmatrix}.$$
+We call matrices of this form \textit{block-upper triangular}.
+\begin{definition}
+Let $T\in\lin(V)$, and let $W\leq V$ be $T$-invariant. Then, we define the \textit{restriction of $T$ onto $W$} by $T|_W: W\to W$ by $w\mapsto Tw$ for all $w\in W$.
+\end{definition}
+\begin{definition}
+Let $T\in\lin(V)$, and let $W\leq V$. We define the \textit{quotient operator of $T$ by $W$} by $T/W: V/W \to V/W$ by $v+W\mapsto Tv+W$ for all $v\in V$.
+\end{definition}
+The next lemma is useful later.
+\begin{lemma}
+Let $T\in\lin(V)$. Then $\ker T$ and $\im T$ are invariant under $T$.
+\end{lemma}
+\begin{proof}
+First, take $v\in\ker T$. Then $Tv = 0$, but $0\in\ker T$, so $\ker T$ is $T$-invariant. Now, take $v\in \im T$. Clearly, $Tv\in \im T$.
+\end{proof}
+It of course follows that if $T\in\lin(V)$ has eigenvalue $\lambda$, then the eigenspace corresponding to $\lambda$, $\ker(T-\lambda I)$, is invariant. Next, we define an important class of linear transformations.
+
+\newpage
+\begin{definition}
+Let $T\in\lin(V)$, and fix $f(x)=a_0 + a_1x + \cdots + a_nx^n$. We define
+$$f(T) := \sum_{i=0}^n a_iT^i,$$
+where we agree to let $T^0 = I$, the identity operator.
+\end{definition}
+We note that if $f, g\in \F[x]$, then we certainly have $f(T)g(T) = g(T)f(T)$; i.e., the ring $\F[T]$ is a commutative ring where addition is given by function addition, and composition is the ring multiplication.
+
+\begin{lemma}
+Let $T\in\lin(V)$, and let $f(x)\in \F[x]$. Then $\ker f(T)$ and $\im f(T)$ are $T$-invariant.
+\end{lemma}
+Notice that this is \textit{not} the same statement as Lemma 18.5, which would assert that $\ker f(T)$ and $\im f(T)$ are $f(T)$-invariant. We now look at the proof.
+\begin{proof}
+Pick $v\in\ker f(T)$. Then $f(T)v = 0$. Applying $T$ to both sides, we see that $Tf(T)v = T(0)= 0$, but $0=Tf(T)v = f(T)Tv = f(T)(Tv)$, so $Tv\in \ker f(T)$.
+
+Similarly, let $v\in\im f(T)$. Then there exists some $u\in V$ with $f(T)u = v$. Applying $T$ to both sides, we see that $Tv = Tf(T)u = f(T)Tu = f(T)(Tu) \in \im f(T)$.
+\end{proof}
+\begin{theorem}
+Let $V$ be a vector space of dimension $n$ over $\C$, and take $T\in\lin(V)$. Then $T$ has at least one eigenvalue.
+\end{theorem}
+\begin{proof}
+Take some $W<V$, and some $w\in W\setminus 0$. Since $\dim W < n$, the set $\set{w, Tw, \ldots, T^nw}$ is linearly dependent, so there exist some complex numbers $a_j$, $0\leq j\leq n$ such that
+$$0 = a_0w + a_1Tw + \cdots + a_nT^nw.$$
+Letting $f(x) = a_0 + a_1x + \cdots + a_nx^n \in \C[x]$, we see that $0 = f(T)(w)$. By the Fundamental Theorem of Algebra, write
+$$f(x) = a_n\prod_{j=1}^n (x-\lambda_j),$$
+so that
+$$f(T)(w) = a_n\prod_{j=1}^n (T-\lambda_jI)(w) = 0.$$
+If each $(T-\lambda_jI)$ were invertible, we would have $f(T)(w) \neq 0$. Hence, there exists some $T - \lambda_kI$, uninvertible, so that $(T-\lambda_kI)w = 0$. Hence, $\lambda_k$ is an eigenvalue for $T$.
+\end{proof}
+\setc{19}
+\section{Invariant Subspaces (II)}
+\begin{example}
+Take $T\in\lin(\C^2)$ to be defined by the rotation matrix $T = \matfour{\cos \alpha}{-\sin\alpha}{\sin \alpha}{\cos \alpha}$. Then we verify that if $(x,y) \neq 0$ is an eigenvector with eigenvalue $\lambda$,
+$$T(x,y) = (x\cos \alpha-y\sin\alpha, x\sin \alpha + y\cos\alpha) = (\lambda x, \lambda y).$$
+Solving this system yields $\lambda^2-2\lambda \cos \alpha + 1=0$, which is a quadratic in $\lambda$, so we recover the eigenvalues $\lambda_{1,2} = \cos\alpha \pm i\sin \alpha$.
+\end{example}
+\newpage
+\begin{theorem}
+Let $V$ be a complex vector space with dimension $n$, and let $T\in\lin(V)$. Then there exists a basis $\set{v_i}_1^n\subset V$ in which $T$ has an upper-triangular matrix:
+$$M_T = \begin{pmatrix}
+\lambda_1 & & & *  \\
+& \lambda_2  \\
+& & \ddots & \\
+0 & & & \lambda_n
+\end{pmatrix}.$$
+\begin{proof}
+We prove by induction on the dimension $n$. If $n=1$, then we are done. Assume that the theorem holds for all vector spaces with dimension at most $n-1$, $n\geq 2$. Suppose $\dim V = n$, so by Theorem 18.8, $T$ has a $\lambda_1$-eigenvector $v_1\neq 0$. Extend to a basis $\set{v_i}_{i=1}^n$ of $V$; the matrix of $T$ under this basis has the form
+$$A_T = \begin{matfour}{\lambda_1}*0B\end{matfour}.$$
+Now, by linear independence, note that $V = \gen{v_1} \oplus \gen{v_2, \ldots, v_n}$. If $U := \gen{v_1}$, then we can see that $T/U$ has matrix $B$ in this basis. But $\dim(T/U) = n-1$, so the inductive hypothesis applies, so there is a basis $\{w_i+U\}_{i=2}^n$ of $V/U$ such that $T/U$ has an upper triangular matrix. Now $V/U\cong \gen{v_2, \ldots, v_m}$, so using the basis $\set{v_1} \cup \set{w_i}_2^n$ finishes the proof.
+\end{proof}
+\end{theorem}
+\setc{22}
+\section{Polynomial Operators: Worked Examples}
+\begin{example}
+Let $S,T\in\lin(V)$, and let $S$ be invertible, and fix $p\in\F[x]$. Prove that $p(STS^{-1}) = Sp(T)S^{-1}$.
+\end{example}
+\begin{proof}
+Choose an arbitrary $v\in V$, and write $p(x) = a_0 + a_1x + a_2x^2 + \cdots + a_nx^n$. Now
+$$p(STS^{-1})v = \sum_{i=0}^n a_i(STS^{-1})^i v,$$
+but we note that $(STS^{-1})^i = ST^iS^{-1}$, so the above simplifies to (by linearity)
+$$p(STS^{-1})v = \sum_{i=0}^n a_iST^{i}S^{-1}v = \brak{S\paren{\sum_{i=0}^n a_iT^i}S^{-1}}v = Sp(T)S^{-1}v,$$
+which completes the proof.
+\end{proof}
+\begin{example}
+Let $T\in\lin(V)$, and take $p\in\C[x]$ and some $\alpha\in\C$. Prove that $\alpha$ is an eigenvalue of $p(T)$ if and only if $\alpha = p(\lambda)$ for some eigenvalue $\lambda$ of $T$.
+\end{example}
+\begin{proof}
+$(\impliedby)$: Suppose $\alpha = p(\lambda)$, where $\lambda$ is an eigenvalue of $T$. Let $v$ be a $\lambda$-eigenvector of $T$, so that $Tv = \lambda v$. By linearity, $p(T)v = \sum a_iT^iv = \sum a_i\lambda^i v = p(\lambda)v = \alpha v$, so $v$ is an $\alpha$-eigenvector of $p(T)$.
+
+$(\implies)$: Suppose $\alpha$ is an eigenvalue of $p(T)$. By algebraic closure of $\C$, write
+$$p(x)-\alpha = c\prod_{i=1}^n (x-\lambda_i),$$
+for some $c\in\C$, so that
+$$p(T) - \alpha I = c\prod_{i=1}^n (T - \lambda_iI).$$
+By a similar argument to the proof of Theorem 18.8, there exists one $\lambda_j$ such that $(T-\lambda_j I)v = 0$, so $\lambda:= \lambda_j$ is an eigenvalue for $T$. Now $p(\lambda)-\alpha = 0$ by construction, so $p(\lambda) = \alpha$.
+\end{proof}
+\begin{example}
+Let $V$ have dimension $n>1$. Let $T\in\lin(V)$. Show that $\F[T] \neq\lin(V)$.
+\end{example}
+\begin{proof}
+Since $V$ is $n$-dimensional, we see that for every $v\in V$, the set $\set{v, Tv, \ldots, T^nv}$ is linearly dependent. Hence $T^n = a_0I + a_1T + \cdots + a_nT^n$ for some $a_i\in \F$. Hence $\dim \F[T] \leq n$, but $\dim \lin(V) = n^2 > n$, as $n>1$. Hence $\F[T] \neq \lin(V)$.
+\end{proof}
+\section{Diagonalizability of Matrices}
+Let $\dim V = n$, and let $T\in\lin(V)$. Assume that $T$ has the upper-triangular matrix with the numbers $\lambda_i$ on the diagonal. From here, it is not too hard to see that the $\lambda_i$ are exactly the eigenvalues of $T$ by an argument similar to that of Theorem 18.8. We state the following theorem.
+\begin{theorem}
+Let $\dim V = n$, and $T\in\lin(V)$. Then $T$ is invertible if and only if $0$ is not an eigenvalue for $T$.
+\end{theorem}
+\begin{proof}
+If $T$ is not invertible, then there exists some $v\neq 0$ such that $Tv = 0 = 0v$. Hence $v$ is a $0$-eigenvalue for $T$. Conversely, if $0$ is an eigenvalue for $T$, then $T-0I = T$ is not invertible by Proposition 14.3.
+\end{proof}
+\begin{example}
+Consider the matrix $A = \matnine 1xy02z003 = \diag(1, 2, 3)\cdot \matnine 1xy01{z/2}001$. Reading off the diagonal, we see that $0$ is not an eigenvalue, so $A$ is invertible. Hence, we calculate its inverse. Note that
+$$A^{-1} = \matnine 1xy01{z/2}001^{-1} \diag\paren{1, \frac 12, \frac 13}, \textsf{ and}$$
+$$\matnine 1xy01{z/2}001 = I + \matnine 0xy00{z/2} 000 =: I+W,$$
+so we can check that $(I+W)^{-1} = I - W + W^2$ (later on, we will see that this means that $W$ has \textit{nilpotency degree} $3$). Hence $A^{-1} = \boxed{(I - W + W^2)\diag(1, 1/2, 1/3)}$.
+\end{example}
+
+From the discussion earlier, we pull out the following corollary.
+\begin{corollary}
+If $T$ has an upper-triangular matrix in some basis, then the eigenvalues of $T$ are the diagonal entries.
+\end{corollary}
+Now, let us define the notion of an \textit{eigenspace}.
+\begin{definition}
+Let $T\in\lin(V)$ and $\lambda\in\C$. Then the \textit{$\lambda$-eigenspace of $T$} is the subspace $E(\lambda, T) := \ker(T-\lambda I)$.
+\end{definition}
+\newpage
+\begin{example}
+Suppose $T$ has the matrix $\diag(8, 5,5)$ in some basis. Then $E(8, T) = \gen{(1, 0,0)}$ and $E(5, T) = \gen{(0, 1, 0), (0,0,1)}$. In contrast, $E(-33, T) = 0$.
+\end{example}
+
+Now, fix $T\in\lin(V)$, and let $T$ have distinct eigenvalues $\lambda_1,\ldots, \lambda_k$. Then each of the $E(\lambda_i, T)$, $i\leq k$, are nontrivial. We have the following lemma.
+\begin{lemma}
+If $T$ has distinct eigenvalues $\lambda_1, \ldots, \lambda_k$, then the sum $E(\lambda_1, T) + E(\lambda_2, T) + \cdots + E(\lambda_k, T)$ is direct.
+\end{lemma}
+\begin{proof}
+Suppose $v\in \sum v_i = \sum w_i$, where $v_i, w_i \in E(\lambda_i, T)$. Then $0 = \sum (v_i - w_i)$, so if $v_i - w_i \neq 0$, then $v_i-w_i$ is an $\lambda_i$-eigenvector of $T$. But eigenvectors with distinct eigenvalues are linearly independent, so each $v_i -w_i$ must be $0$. Hence, the sum $v = \sum v_i$ is uniquely determined, so the sum of the spaces $E(\lambda_i, T)$ is direct.
+\end{proof}
+\setc{26}
+\section{Eigenvalues and Matrices: Worked Examples}
+\begin{example}
+Let $\dim V = n<\infty$, and let $T\in\lin(V)$ have $n$ distinct eigenvalues. Also, let $S\in\lin(V)$ have the same eigen\textit{vectors} as $T$. Show that $S$ and $T$ commute.
+\end{example}
+\begin{proof}
+Let $\set{\lambda_i}_1^n$ be the distinct set of eigenvalues for $T$, and let $\{v_i\}_1^n$ be a set of $\lambda_i$-eigenvectors of $T$. Now, the $v_i$ are eigenvalues for $S$ as well, so to each $v_i$, let $\mu_i$ be its $S$-eigenvalue. [Notice that the $\mu_i$ are not necessarily distinct.]
+
+Now, the $v_i$ form an eigenbasis of $T$ for $V$, so that if $v\in V$, we have $v = \sum a_iv_i$. Hence
+$$STv = ST\sum_{i=1}^n a_iv_i = S\sum_{i=1}^n a_i\lambda_iv_i = \sum_{i=1}^n a_i\lambda_i\mu_i v_i,$$
+and we get the same thing for $TSv$. Hence $ST = TS$.
+\end{proof}
+\begin{example}
+Let $R, T\in\lin(\F^3)$ have $2, 6, 7$ as eigenvalues. Prove that there exists an $S \in\lin(\F^3)$ such that $R = S^{-1}TS$.
+\end{example}
+\begin{proof}
+Since $R,T\in\lin(\F^3)$ and each has $3$ distinct eigenvalues, we have the eigenbases $\set{r_i}_1^3$ (for $R$) and $\set{t_i}_1^3$ (for $T$), where each $r_i, t_i$ has eigenvalue $\lambda_i$. Let $S$ be the \textit{change of basis} mapping $r_i\mapsto t_i$. We claim that $S$ is injective (hence invertible): if $v = a_1r_1 + a_2r_2 + a_3r_3\in\ker S$, then $Sv = 0$ forces $a_1=a_2=a_3=0$, so $v=0$. Hence $S$ is invertible. Now, fix $v = b_1r_1+b_2r_2 + b_3r_3\in V$. We can verify that indeed $S^{-1}TSv = Rv$.
+\end{proof}
+\begin{example}
+Let $R,T\in\lin(\F^4)$ have $2,6,7$ as their \textit{only} eigenvalues. Does there necessarily exist some $S\in \lin(\F^4)$ such that $R = S^{-1}TS$?
+\end{example}
+\begin{solution}
+No: take $T = \diag(2, 6, 7, 2)$, and $R= \diag(2, 6, 7, 6)$.
+\end{solution}
+\section{Conditions for Diagonalizability}
+From Lemma 24.6, we have the following corollary.
+\begin{corollary}
+Let $V$ be a vector space, and let $T\in\lin(V)$ have $\lambda_1,\ldots, \lambda_m$ as eigenvalues. Then $\dim E(\lambda_1, T) + \cdots + \dim E(\lambda_m, T) \leq \dim V$.
+\end{corollary}
+We also have the following important theorem.
+\newpage
+\begin{theorem}[Diagonalizability Conditions]
+Let $T\in\lin(V)$ and let $\lambda_1, \ldots, \lambda_m$ be the distinct eigenvalues of $T$, where $V$ has dimension $n$. Then the following are equivalent:
+\begin{enumerate}
+    \item $T$ is diagonalizable.
+    \item $V$ has a basis of eigenvectors of $T$.
+    \item There exist one-dimensional subspaces $U_1, \ldots, U_n\leq V$, all $T$-invariant, such that $$V = U_1 \oplus \cdots \oplus U_n.$$
+    \item We have $V = E(\lambda_1, T)\oplus \cdots \oplus E(\lambda_m, T)$.
+    \item We have $n=\dim V = \dim E(\lambda_1, T) +\cdots  + \dim E(\lambda_m, T)$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+We leave $(1)\iff (2)$ as an easy verification.
+
+$(2)\implies (3)$: Assume that $(2)$ holds, and set $\set{v_i}_1^n$ to be an eigenbasis of $T$ for $V$. Now, let $U_i := \gen{v_i}$. Of course, each $U_i$ is $T$-invariant: if $u\in U_i$, then $u=av_i$ for some $a\in\F$. Hence $Tu = T(av_i) = aTv_i = a\lambda_i v_i\in U_i$. That $V = U_1\oplus \cdots \oplus U_n$ ollows from the fact that $\gen{v_i}$ is a basis.
+
+$(3)\implies (2)$: Suppose $V = U_1 \oplus \cdots \oplus U_n$, where the $U_i$ are all one-dimensional subspaces of $V$ as well as $T$-invariant. Then $U_i = \gen{v_i}$ for some $v_i\in V$. By $T$-invariance, we verify $Tv_i \in U_i \implies Tv_i = \lambda_i v_i$ for some $\lambda_i\in\F$. But this means that the $\lambda_i$ are eigenvalues of $T$, which means that the $v_i$ form an eigenbasis of $T$ for $V$.
+
+$(4)\implies (5)$ follows directly from Corollary 28.1.
+
+$(5)\implies (2)$: Assume $(5)$ holds. Chose a basis in $E(\lambda_i, T)$ for each $i\leq n$, so $T$ has matrix $\lambda_i I$ when restricted to that (invariant) subspace. Combining the bases, we get a linearly independent basis of $V$ by assuming $(5)$, so we are done after combining the $\lambda_iI$'s.
+\end{proof}
+
+\begin{corollary}
+Let $\dim V = n$. If $T\in\lin(V)$ has $n$ distinct eigenvalues, then $T$ is diagonalizable.
+\end{corollary}
+\begin{example}
+Let $T$ have the matrix $M_T :=\matnine 210 053 008$. This matrix has the eigenvalues $2, 5, 8$, so it is diagonalizable.
+\end{example}
+\setc{29}
+\section{Inner Products}
+In this section, we will assume that $V$ is a vector space over $\F$, where $\F$ is either $\R$ or $\C$.
+\begin{definition}
+Let $V$ be a vector space. A function $\gen{\cdot, \cdot}: V\times V\to \F$ is an \textit{inner product} if it satisfies these axioms for all $v, v_1, v_2, w\in V$ and $\alpha\in\F$:
+\begin{enumerate}
+    \item $\gen{v_1+v_2, w} = \gen{v_1, w} + \gen{v_2, w}$,
+    \item $\gen{\alpha v, w} = \alpha\gen{v, w}$,
+    \item $\gen{v, v}\geq 0$ and $\gen{v,v} = 0$ if and only if $v=0$,
+    \item $\gen{v, w} = \overline{\gen{w, v}}$.
+\end{enumerate}
+When a vector space $V$ is equipped with an inner product, we say that $V$ is an \textit{inner product space}.
+\end{definition}
+\newpage
+
+We should note that over $\R$, the conjugation is inconsequential, and so the inner product over $\R$ is commutative. Also, property (3) suggests a way to measure a vector's ``length" in $V$.
+
+\begin{definition}
+Let $V$ be an inner product space. Then the \textit{norm} of a vector is the function $\norm\cdot: V\to \F$ given by $\norm v := \sqrt{\gen{v, v}}$.
+\end{definition}
+
+Here are some basic properties of the inner product.
+\begin{proposition}
+Let $V$ be an inner product space. Then the following hold for all $u,v, w\in V$ and $\beta\in\F$:
+\begin{enumerate}
+    \item $\gen{v, \beta w} = \bar\beta \gen{v,w}$,
+    \item $\gen{0, w} = 0 = \gen{v, 0}$.
+    \item $\gen{u, v+w} = \gen{u,v} + \gen{u, w}$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+$(1)$: We have $\gen{v, \beta w} = \overline{ \gen{\beta w, v}} = \overline{\beta \gen{w,v}} = \bar\beta \overline{\gen{w,v}} = \bar\beta\gen{v,w}$.
+
+$(2)$: Write $\gen{0, w} = \gen{v-v, w} = \gen{v,w} - \gen{v,w} = 0$.
+\vspace{0.1 cm}
+
+$(3)$: We have $\gen{u, v+w} = \overline{\gen{v+w, u}} = \overline{\gen{v,u} + \gen{w,u}} = \gen{u,v} + \gen{u,w}.$
+\end{proof}
+From this, we get two substantial consequences.
+\begin{theorem}[Pythagorean Theorem]
+If $\gen{u, v} = 0$, then $\norm{u+v}^2 = \norm u^2 + \norm v^2$.
+\end{theorem}
+\begin{proof}
+Expand $\norm{u,v}^2 =\gen{u+v, u+v} = \gen{u,u} + \gen{v,u} + \gen{u,v} + \gen{v,v}$. Now, the ``cross terms" vanish by assumption, so $\norm{u,v}^2 = \gen{u ,u} +\gen{v,v} = \norm u^2 + \norm v^2$.
+\end{proof}
+\begin{theorem}[Cauchy-Schwarz Inequality]
+For every $u, v\in V$, where $V$ is an inner product space, we have $\abs{\gen{u,v}} \leq \norm u \cdot \norm v$.
+\end{theorem}
+\begin{proof}
+Write an \textit{orthogonal decomposition} of $u$:
+$$u = \frac{\gen{u,v}}{\norm v^2}v + w,$$
+for some $w\in V$. Now $\ds\gen{u,v} = \frac{\gen{u, v}}{\norm v^2}\cdot \gen{v,v} + \gen{w,v} = \gen{u,v} + \gen{w,v}$, so we see that $\gen{w,v} = 0$. Applying the Pythagorean Theorem, we see
+$$\norm u^2 = \norm{\frac{\gen{u,v}}{\norm v^2}v}^2 + \norm w^2 = \abs{\frac{\gen{u,v}}{\norm v^2}}^2 \norm v^2 + \norm w^2 \geq \frac{\abs{\gen{u,v}}^2}{\norm v^4}\norm v^2 = \frac{\abs{\gen{u,v}}^2}{\norm v^2}.$$
+Now solving and taking square roots finishes the proof.
+\end{proof}
+In the case where $V$ is an inner product space over $\R$, we observe $\ds 1\geq \abs{\frac{\gen{u, v}}{\norm u\norm v}}=: x$, so we can view $x = \cos \phi$ for some $\phi\in\R$.
+\begin{example}
+If $\set{x_i}_1^n, \set{y_i}_1^n\subset \R$, then the Cauchy-Schwarz inequality implies (with the dot product) that
+$$\abs{\sum_{i=1}^n x_iy_i}^2 \leq \paren{ \sum_{i=1}^n x_i^2}\paren{ \sum_{i=1}^n y_i^2}.$$
+\end{example}
+\newpage
+Finally, we introduce one more theorem, which makes sense when we draw a diagram.
+\begin{theorem}[Triangle Inequality]
+Let $V$ be an inner product space. Then for any $u, v\in V$, we have $\norm{u+v}\leq \norm u + \norm v$.
+\begin{center}
+\begin{tikzpicture}
+\draw[->, color=red!75] (0,0) -- (4,0);
+\draw[->, color=cyan!75] (4,0) -- (4,2);
+\draw[->] (0,0) -- (4,2);
+\draw (2,0) node[anchor=north]{$u$};
+\draw (4,1) node[anchor=west]{$v$};
+\draw (2.6,1.5) node[anchor=east]{$u+v$};
+\end{tikzpicture}
+\end{center}
+\end{theorem}
+\begin{proof}
+Recall that $\norm{u+v}^2 = \gen{u,u} + \gen{v,v} + \gen{u,v} + \overline{\gen{u,v}} = \norm u^2 + \norm v^2 + 2\Re\gen{u,v}$. Now
+\begin{align*}
+\norm u^2 + \norm v^2 + 2\Re\gen{u,v} &\leq \norm u^2 + \norm v^2 + 2\abs{\gen{u,v}}\\
+&\leq \norm u^2 +\norm v^2 + 2\norm u\norm v \textsf{ (by Cauchy-Schwarz)} \\
+&= \paren{\norm u + \norm v}^2.
+\end{align*}
+Taking square roots finishes the proof.
+\end{proof}
+\setc{32}
+\section{Inner Products: Worked Examples}
+In this section, we will assume $V$ is an inner product space over $\F = \R$ or $\C$.
+\begin{example}
+Let $u,v\in V$ with $\norm u = 3$, $\norm{u+v} = 4$, and $\norm{u-v} = 6$. What is $\norm v$?
+\end{example}
+\begin{solution}
+We have $\norm{u+v}^2 = \norm u^2 + \norm v^2 + \gen{u, v} + \gen{v, u}$, and similarly $\norm{u-v}^2 = \norm u^2 + \norm v^2 - \paren{\gen{u, v} + \gen{v, u}}$. Hence, combining gives
+$$\norm{u+v}^2 + \norm{u-v}^2 = 2\norm u^2 + 2\norm v^2\implies 36+16 = 2(9) + 2\norm v^2,$$
+so that $\norm v = \boxed{\sqrt{17}}$.
+\end{solution}
+\begin{example}
+Prove that if $a_i, b_i\in \R$, we have $\ds\paren{ \sum_{i=1}^n a_ib_i}^2 \leq \paren{\sum_{i=1}^n ia_i^2}\paren{\sum_{i=1}^n \frac{b_i^2}i}$.
+\end{example}
+\begin{proof}
+Write $\ds \paren{ \sum_{i=1}^n a_ib_i}^2 = \paren{ \sum_{i=1}^n \sqrt ia_i\frac{b_i}{\sqrt i}}^2$. Now, the Cauchy-Schwarz inequality implies
+$$\paren{\sum a_ib_i}^2 \leq \paren{\sum (\sqrt ia_i)^2}\paren{\sum\paren{\frac{b_i}{\sqrt i}}^2} = \paren{\sum ia_i^2}\paren{\sum \frac{b_i^2}{i}},$$
+which completes the proof.
+\end{proof}
+\begin{example}
+Let $u,v\in V$. Prove that $\gen{u,v}= 0$ if and only if $\norm u \leq \norm{u+av}$ for every $a\in\F$. 
+\end{example}
+\begin{proof}
+$(\implies)$: Since $\gen{u,v} = 0$, we apply Pythagoras and write
+$$\norm u^2 \leq \norm u^2 + \norm{av}^2 = \norm{u + av}^2,$$
+which completes this implication. \newpage
+
+$(\impliedby)$: Suppose $\norm u\leq \norm{u+av}$ for every $a\in\F$. Write
+$$\norm u^2 \leq \norm{u+av}^2 = \gen{u+av, u+av} = \norm u^2 + \abs a^2\norm v^2 + \gen{u, av} + \gen{av ,u}$$
+$$\implies \norm u^2\leq \norm u^2+\abs a^2\norm v^2 + 2\Re(\bar a\gen{u,v})$$
+$$\implies \abs a^2\norm v^2 \geq -2\Re\paren{\bar a\gen{u, v}}.$$
+Since this holds for all $a\in \F$, we can set $a = -\gen{u,v}/\norm v^2$ (the \textit{projection length}), so that $2\abs{\gen{u,v}}^2 \leq \abs{\gen {u,v}}^2$, implying $\gen{u,v}=0$.
+\end{proof}
+\section{Inner Product Spaces and Orthonormal Bases}
+Again, we will assume that $V$ is an inner product space over $\F = \R$ or $\C$.
+\begin{theorem}[Parallelogram Law]
+For all $u,v\in V$, we have
+$$\norm{u+v}^2 + \norm{u-v}^2 = 2\norm u^2 + 2\norm v^2.$$
+\begin{center}
+\begin{tikzpicture}
+\draw[color=red!75,->, thick] (0,0) -- (2,0);
+\draw (1,0) node[anchor=north]{$u$};
+\draw[color=cyan!75,->, thick] (0,0) -- (1.5,1.5);
+\draw (0.75, 0.85) node[anchor=east]{$v$};
+\draw[color=red!75, ->, dashed] (1.5,1.5)--(3.5,1.5);
+\draw[color=cyan!75, ->, dashed] (2,0) -- (3.5,1.5);
+\draw[thick, ->] (0,0) -- (3.5, 1.5);
+\draw[thick, ->, color=black!50] (2,0) -- (1.5,1.5);
+\draw (3.5,1.5) node[anchor=south]{$u+v$};
+\draw (1.5,1.5) node[anchor=south]{$u-v$};
+\end{tikzpicture}
+\end{center}
+\end{theorem}
+\begin{proof}
+We expand by the definition of the norm:
+\begin{align*}
+\norm{u+v}^2 + \norm{u-v}^2 &= \gen{u+v, u+v} + \gen{u-v, u-v} \\
+&= \gen{u,u} + \gen{u,v} + \gen{v,u} + \gen{u,v} + \gen{u,u} - \gen{v,u} - \gen{u,v} + \gen{v,v} \\
+&= 2\gen{u,u} + 2\gen{v,v} \\
+&= 2\norm u^2 + 2\norm v^2,
+\end{align*}
+which completes the proof.
+\end{proof}
+\subsection*{[6B] Orthogonal Bases}
+\begin{definition}
+Let $V$ be an inner product space. We say that $u,v \in V$ are \textit{orthogonal} if $\gen{u,v} = 0$.
+\end{definition}
+\begin{definition}
+We say that $\set{e_i}_1^k$ is an \textit{orthonormal system} of vectors if $\gen{e_i, e_j} = 0$ if $i\neq j$, and $\norm {e_i} = 1$ for all $i\leq k$.
+\end{definition}
+That is, a list of vectors is orthonormal if they all have the same length $1$, and they are all mutually orthogonal to each other.
+\begin{example}
+Let $V = \R^3$. Certainly, $\set{(1,0,0), (0,1,0), (0,0,1)}$ is a list of orthonormal vectors under the standard dot product, but we can check that
+$$\set{\frac 1{\sqrt 3}(1,1,1), \frac 1{\sqrt 2}(-1, 1, 0), \frac 1{\sqrt 6}(1,1,-2)}$$
+is an orthonormal list as well.
+\end{example}
+
+Orthonormality plays nicely with linear independence.
+\newpage
+\begin{lemma}
+An orthonormal system of vectors is linearly independent.
+\end{lemma}
+\begin{proof}
+Suppose that $\set{e_i}_1^k\subset V$ is an orthonormal system, and suppose there exist scalars $a_i\in \F$ with $\sum a_ie_i = 0$. Then for any $j\leq n$, we have
+$$0 = \gen{\sum_{i=1}^n a_ie_i, e_j} = \sum_{i=1}^n \gen{a_ie_i, e_j} = \sum_{i=1}^n a_i\gen{e_i, e_j},$$
+and by orthonormality, this simplifies down to $0=a_j\gen{e_j, e_j} = a_j \cdot 1 = 0$. Hence, our list is linearly independent.
+\end{proof}
+\begin{lemma}
+If $\dim V =: n$  and $\set{e_i}_1^n$ is an orthonormal basis, then for any $v\in V$, we have
+$$v = \sum_{i=1}^n \gen{v, e_i}e_i.$$
+\end{lemma}
+This lemma tells us that the decomposition of a vector within an orthonormal basis is very easy to find. The following is a consequence:
+\begin{proposition}
+Let $\set{e_i}_1^n$ be an orthonormal basis of $V$, and write $v = \sum a_ie_i$. Then
+$$\norm v^2 = |a_1|^2 + |a_2|^2 + \cdots + |a_n|^2.$$
+\end{proposition}
+\begin{proof}
+By Lemma 34.6, we have $a_i = \gen{v, e_i}$. Then, expand $\norm v^2 = \gen{v,v}$ and simplify: all of the cross-terms disappear.
+\end{proof}
+We view one example.
+\begin{example}
+Let $\set{e_i}_1^m\subset V$ be an orthonormal system, and fix $v\in V$. Show that $\norm v^2 = \sum_i \abs{\gen{v, e_i}}^2$ if and only if $v\in \Span(e_1 ,\ldots, e_m)$.
+\begin{proof}
+$(\impliedby)$: Suppose $v\in \Span(e_1, \ldots, e_m) =: W$, so that $\set{e_i}_1^m$ is an orthonormal \textit{basis} of $W$. Then we immediately have
+$$v = \gen{v, e_1}e_1 + \gen{v, e_2}e_2 + \cdots + \gen{v, e_m}e_m.$$
+Hence $\norm{v}^2 = \sum_i \abs{\gen{v, e_i}}^2$ by Proposition 34.7. Note that these steps are reversible, so the $(\implies)$ direction is completed as well.
+\end{proof}
+\end{example}
+\setc{37}
+\section{Orthonormal Bases}
+In this section, we will show that orthonormal bases exist in any inner product space $V$ via induction. Take a linearly independent set $\set{v_i}_1^m$. We \textit{normalize} $v_1$: define $e_1 := \alpha v_1$, where $\alpha = 1/\norm{v_1}$. Hence $\norm{e_1} = 1$, so the set $\set{e_1}$ is orthonormal. Now, $\set{v_1, v_2}$ is linearly independent, and thus so is $\set{e_1, v_2}$, but now we will find some $e_2$ which is orthonormal to $e_1$.
+
+Letting $e_2 =\alpha e_1+\beta v_2$, we must have
+$$0 = \gen{e_2, e_1} = \gen{\alpha e_1 + \beta v_2, e_1} = \alpha\gen{e_1, e_1} + \beta\gen{v_2 e_1} = \alpha + \beta\gen{v_2, e_1}.$$
+Furthermore, we have $1 = \gen{e_2, e_2} = \gen{\alpha e_1 + \beta v_2, \alpha e_1 + \beta v_2}$. Setting $\beta = 1$ to simplify, we have
+$$e_2 = \frac{v_2 - \gen{v_2, e_1}e_1}{\norm{v_2 - \gen{v_2, e_1}e_1}}.$$
+We can, of course, continue this inductively: this is the idea of the Gram-Schmidt Procedure. \newpage
+\begin{theorem}[Gram-Schmidt Procedure]
+Let $\set{v_j}_1^m$ be a linearly independent set, and let $e_1 := v_1/\norm{v_1}$. For $j\geq 2$, recursively define
+$$u_j := v_j - \gen{v_j, e_1}e_1 - \cdots - \gen{v_j, e_{j-1}}e_{j-1} \textsf{ and } e_j := \frac{u_j}{\norm {u_j}}.$$
+Then $\set{e_j}_1^m$ is an orthonormal list of vectors with $\Span(v_1, \ldots, v_m) = \Span(e_1, \ldots, e_m)$.
+\end{theorem}
+\begin{example}
+Find an orthonormal basis of $\mathcal P_2(\R)$ with the inner product $\gen{p,q} = \ds\int_{-1}^1 pq \,dx$.
+\end{example}
+\begin{solution}
+We apply Gram-Schmidt (GS) to the standard basis $\set{1, x, x^2}$. We see $\norm 1^2 = 2$, so $e_1 = 1/\sqrt 2$. Now,
+$$u_2 = x - \gen{x, e_1}e_1 = x - \frac 1{\sqrt 2}\int_{-1}^1 x\frac 1{\sqrt 2}\, dx = x,$$
+and we have $\norm x^2 = 2/3$, so $e_2 = \sqrt{\frac 32}x$. Finally, we have
+$$u_3 =x^2 - \gen{x^2, e_1}e_1 - \gen{x^2, e_2}e_2$$
+$$=x^2 - \paren{\int_{-1}^1 x^2\sqrt{\frac 12}\, dx} \sqrt{\frac 12} - \cancel{\paren{\int_{-1}^1x^2 \sqrt{\frac 32}x \, dx} x\sqrt{\frac 32}} = x^2 - \frac 13.$$
+Now $\norm{u_3}^2 = 8/45$, so $e_3 = \sqrt{\frac{45} 8}\paren{x^2 - \frac 13}$. Hence, an orthonormal basis of $\mathcal P_2(\R)$ is
+$$\boxed{\set{\sqrt{\frac 12}, x\sqrt{\frac 32}, \sqrt{\frac{45}8}\paren{x^2 - \frac 13}}}.$$
+\end{solution}
+We have the following corollaries of the GS procedure.
+\begin{corollary}
+If $V$ is a finite-dimensional inner product space, then $V$ has an orthonormal basis.
+\end{corollary}
+\begin{proof}
+Take a basis of $V$ and apply GS.
+\end{proof}
+\begin{corollary}
+Let $\dim V = n$ and let $\set{e_i}_1^n$ be an orthonormal basis of $V$. If $v = \sum_i \alpha_i e_i$ and $u = \sum_i \beta_ie_i$, then $\gen{v,u} = \sum_i\alpha_i\overline{\beta_i}$.
+\end{corollary}
+
+These lemmas are also important.
+\begin{lemma}
+Let $\dim V =: n$, and let $\epsilon := \{e_i\}_1^k\subset V$ be an orthonormal system. Then $\epsilon$ can be extended to an orthonormal basis $\set{e_i}_1^n$.
+\end{lemma}
+\begin{proof}
+Extend $\epsilon$ to a basis $\epsilon \cup \set{f_j}_{k+1}^n$. Applying GS to this basis, we see that the vectors in $\epsilon$ remain unchanged, while the vectors $f_j$, $j\geq k+1$, are converted to orthonormal $e_j$. Hence $\set{e_i}_1^n$ is an orthonormal basis of $V$.
+\end{proof}
+\begin{lemma}
+Let $V$ be a complex finite-dimensional inner product space, and let $T\in\lin(V)$. Then there exists an orthonormal basis in which $T$ has an upper triangular matrix.
+\end{lemma}
+\begin{proof}
+Choose a basis $\set{v_i}_1^n$ such that the matrix of $T$ is upper triangular, and apply GS to obtain a corresponding $\set{e_i}_1^n$. Now $Te_1 = (Tv_1)/ \norm{v_1}$, but because the matrix of $T$ is upper-triangular, we conclude that $Te_1 = \lambda_1e_1$ for some $\lambda_1\in\C$. This continues inductively: each $e_i$ is not dependent on the $e_j$'s with $j>i$. Hence, the matrix of $T$ with respect to $\set{e_i}_1^n$ is upper triangular.
+\end{proof}
+\setc{39}
+\section{Linear Functionals and Orthogonal Complements}
+As usual, let $V$ denote an inner product space over $\F = \R$ or $\C$.
+\subsection*{[6B] Linear Functionals}
+Here is one important application of inner products.
+\begin{definition}
+A \textit{linear functional} on $V$ is a linear map $\phi: V\to \F$.
+\end{definition}
+
+The next theorem tells us that linear functionals are completely determined by the inner product on $V$.
+\begin{theorem}[Riesz Representation Theorem]
+Any linear functional $\phi: V\to \F$ is of the form $\phi(v) = \gen{v, u}$ for a unique vector $u\in V$.
+\end{theorem}
+\begin{proof}
+Choose an orthonormal basis $\set{e_i}_1^n \subset V$, and let $v\in V$. Then $v = \sum_i a_ie_i$, so if $\phi: V\to \F$ is a linear functional,
+$$\phi(v) = \phi\paren{\sum_{i=1}^n a_ie_i} = \sum_{i=1}^n \gen{v, e_i}\phi(e_i),$$
+where we know $a_i = \gen{v, e_i}$ from Lemma 34.6. We can continue to expand by properties of the inner product:
+$$\phi(v) = \sum_{i=1}^n \gen{v, e_i}\phi(e_i) = \sum_{i=1}^n \gen{v, \overline{\phi(e_i)}e_i} = \gen{v, \sum_{i=1}^n \overline{\phi(e_i)}e_i}.$$
+Now, let $u = \sum_i \overline{\phi(e_i)}e_i$, which proves existence. Note that $u$ is unique as $\phi$ is completely determined by its values on the basis $\set{e_i}_1^n$: if for all $v\in V$, we had $\gen{v,u} =\gen{v, u'} = \phi(v)$ for some $u'\in V$, then $\gen{v, u-u'}=0$. In particular, setting $v = u-u'$ gives $\norm{u - u'} = 0 \iff u = u'$, so $u$ is indeed unique.
+\end{proof}
+\begin{example}
+Let $\phi: \mathcal P_2(\R)\to \R$ be any linear functional. Then every $\phi$ has the form
+$$\phi(f(x)) = \int_{-1}^1 f(x) g(x)\, dx$$
+for a fixed $g(x)\in\mathcal P_2(\R)$. This is because the integral is a well-defined inner product.
+\end{example}
+\subsection*{[6C] Orthogonal Complements}
+Just as we can discuss orthogonal lists of vectors, we can discuss orthogonal \textit{spaces}.
+\begin{definition}
+Let $U\subseteq V$. The \textit{orthogonal complement} of $U$ is the set
+$$U^\perp := \set{v\in V: \gen{v,u} = 0 \textsf{ for all } u\in U}.$$
+\end{definition}
+Although $U$ was just a subset, $U^\perp$ turns out to be a \textit{subspace}.\newpage
+\begin{proposition}
+For any $U\subseteq V$, we have $U^\perp \leq V$.
+\end{proposition}
+\begin{proof}
+Use the properties of the inner product.
+\end{proof}
+
+The orthogonal complement satisfies these basic properties.
+\begin{proposition}
+Let $U, W \subseteq V$. Then the following hold:
+\begin{enumerate}
+    \item $\set0^\perp = V$,
+    \item $V^\perp = \set0$,
+    \item $U\cap U^\perp =\set0$ or $\varnothing$, and
+    \item $U\subseteq V$ implies $W^\perp \subseteq U^\perp$.
+\end{enumerate}
+\end{proposition}
+We remark that it is \textbf{not true} that $U\cup U^\perp = V$! But we have a useful alternative to this that \textit{is} true.
+
+\begin{theorem}
+Let $U\leq V$ be a subspace. Then $V = U \oplus U^\perp$.
+\end{theorem}
+\begin{proof}
+Since $U\leq V$, we have $0\in U$ so $U\cap U^\perp = \set0$ by Proposition 40.6(3). Thus, it suffices to show $V = U + U^\perp$. Choose an orthonormal basis $\set{e_i}_1^k$ of $U$, and fix $v\in V$. Then
+$$v = w + \sum_{i=1}^k \gen{v, e_i}e_i$$
+for some $w\in V$. Letting $u = \sum_i \gen{v, e_i}e_i$, we see $u\in U$, so we show $w\in U^\perp$. Now, for each $e_i$, $i\leq k$,
+$$\gen{w, e_i} = \gen{v-u, e_i} = \gen{v, e_i} - \gen{u, e_i} = \gen{v, e_i} - \gen{v, e_i} = 0$$
+by orthogonality. Hence $w\perp e_i$ for every $i\leq k$, so $w\in U^\perp$.
+\end{proof}
+\setc{43}
+\section{Complements and Adjoints}
+As usual, let $V$ be an inner product space over $\F = \R$ or $\C$.
+\subsection*{[6C] Orthogonal Complements}
+\begin{definition}
+Let $U\leq V$, so that $V = U\oplus U^\perp$ by Theorem 40.7. We define the \textit{orthogonal projection} $P_U$ by $P_U(v) := u$, where $v = u+w$, $u\in U$, $w\in U^\perp$.
+\end{definition}
+\begin{proposition}[Properties of the Orthogonal Projection]
+Let $U\leq V$, and let $P_U$ be the orthogonal projection for $U$. Then for all $v\in V$:
+\begin{enumerate}
+    \item $P_U: V\to V$ is linear,
+    \item $\im(P_U) = U$,
+    \item $\ker(P_U) = U^\perp$,
+    \item $v-P_U(v)\in U^\perp$,
+    \item $P_U^2 = P_U$,
+    \item $\norm{P_U(v)}\leq \norm v$,
+    \item If $U$ has an orthonormal basis $\set{e_i}_1^m$, then $P_U(v) = \sum_i \gen{v, e_i}e_i$.
+\end{enumerate}
+\end{proposition}
+\newpage
+\begin{proof}
+$(1)$ through $(5)$ are fairly obvious. For $(6)$ and $(7)$, choose orthonormal bases $\gen{e_i}_1^m$ for $U$ and $\gen{e_i}_{m+1}^n$ for $U^\perp$, so that $\gen{e_i}_1^n$ is an orthonormal basis\footnote{Here, we used the fact that $U\perp U^\perp$.} for $V$. Hence
+$$v = \sum_{i=1}^n \gen{v, e_i}e_i = \sum_{i=1}^m \gen{v, e_i}e_i + \sum_{j=m+1}^n \gen{v, e_j}e_j =: u + w.$$
+Hence $P_U(v) = u = \sum_{i=1}^m \gen{v, e_i}e_i$, proving $(7)$. Now
+$$\norm v^2 = \sum_{i=1}^n \abs{\gen{v, e_i}}^2 \geq \sum_{i=1}^m \abs{\gen{v, e_i}}^2,$$
+so we have proven $(6)$.
+\end{proof}
+\subsection*{[7A] Adjoint Operators}
+Now, we define a type of operator closely related to the orthogonal complement.
+\begin{definition}
+Let $V,W$ be inner product spaces, and let $T: V\to W$ be linear. Then the \textit{adjoint} of $T$ is a function $T^*: W\to V$ satisfying $\gen{Tv, w} = \gen{v, T^*w}$.
+\end{definition}
+\begin{example}
+Let $T: \R^3\to \R^2$ be given by $(x_1, x_2, x_3) \mapsto (x_2+3x_3, 2x_1)$. We compute $T^*$. Under the standard dot product (in $\R^n$), we write (for $x\in\R^3, y\in \R^2$)
+$$Tx\cdot y = x\cdot T^*y,$$
+so that we have
+$$(x_1, x_2, x_3) \cdot T^*(y_1, y_2) = (x_2 + 3x_3, 2x_1) \cdot (y_1, y_2) = x_2y_1 + 3x_3y_1 + 2x_1 y_2.$$
+But $x_2y_1+3x_3y_1+2x_1y_2 = (x_1, x_2, x_3)\cdot (2x_2, y_1, 3y_1)$, so we have $T^*(y_1, y_2) = (2y_2, y_1, 3y_1)$.
+\end{example}
+\begin{lemma}
+If $T: V\to W$ is a linear map, $T^*$ exists uniquely and is also a linear map.
+\end{lemma}
+\begin{proof}
+Fix a linear map $T: V\to W$, and define a linear functional $f: V\to \F$ by $v\mapsto \gen{Tv, w}\in \F$. By the Riesz Representation Theorem, there exists a \textit{unique} $u\in V$ such that $f(v) = \gen{v, u}$. We claim $T^*w = u$. We leave it for the reader to check uniqueness and that $T^*$ is linear.
+\end{proof}
+
+\setc{46}
+\section{Basic Properties of the Adjoint}
+\begin{example}
+Let $\mathcal P_2(\R)$ have the inner product $\gen{p, q} := \int_0^1 pq\, dx$. Define $T\in \lin(\mathcal P_2(\R))$ by $a_0 = a_1x + a_2x^2 \mapsto a_1x$. Is $T$ \textit{self-adjoint}, i.e., does $T = T^*$?
+\end{example}
+\begin{solution}
+If $T$ is self-adjoint, then we have $\gen{Tv, w} = \gen{v, Tw}$. Taking $v= 1$ and $w=x$, we verify that
+$$\gen{Tv, w} = \gen{0, x} = 0, \textsf{ but}$$
+$$\gen{v, Tw} = \gen{1, x} = \int_0^1 x\, dx = \frac 12\neq 0.$$
+Hence, $T$ is \textit{not} self-adjoint.
+\end{solution}
+\newpage
+
+We also introduce the following definition.
+\begin{definition}
+Let $T\in\lin(V)$. Then $T$ is \textit{normal} if $TT^* = T^*T$.
+\end{definition}
+
+\begin{proposition}
+Let $S, T\in \lin(V, W)$, and $\lambda\in\F$. Then the following hold:
+\begin{enumerate}
+    \item $(S+T)^* = S^* + T^*$,
+    \item $(ST)^* = T^*S^*$,
+    \item $(T^*)^* = T$,
+    \item $(\lambda T)^* = \bar\lambda T^*$,
+    \item $I^* = I$,
+    \item If $\beta$ and $\gamma$ are orthonormal bases of $V$ resp. W and $T$ has matrix $A$ with respect those bases, then $T^*$ has matrix $\overline{A^t}$ with respect to the same bases.
+\end{enumerate}
+\end{proposition}
+We will prove $(1)$, and leave the rest to the reader.
+\begin{proof}
+$(1)$: We proceed by definition of the adjoint: $(S+T)^*$ must satisfy for all $v\in V$, $w\in W$
+$$\gen{Sv, w} + \gen{Tv, w} = \gen{(S+T)v, w} = \gen{v, (S+T)^*w}.$$
+But notice $\gen{v, S^*w} + \gen{v, T^*w} = \gen{v, S^*w + T^*w}$, and
+$$\gen{v, S^*w} + \gen{v, T^*w} = \gen{Sv, w} + \gen{Tv, w} = \gen{(S+T)v, w}.$$
+By uniqueness of the adjoint, we are done.
+\end{proof}
+
+\setc{57}
+\section{Normal Operators}
+As usual, let $V$ be an inner product space over $\F = \R$ or $\C$, and let $T\in \lin(V)$. We will study 3 special types of operators.
+\begin{definition}
+$T$ is \textit{self-adjoint} if $T^* = T$.
+\end{definition}
+\begin{definition}
+$T$ is \textit{skew-adjoint} if $T^* = -T$.
+\end{definition}
+\begin{definition}
+$T$ is an \textit{isometry} if $T^* = T^{-1}$. In particular, if $\F = \C$, we say that $T$ is \textit{unitary}.
+\end{definition}
+In all three cases, we see that by Definition 47.2, $T$ is normal. For a demonstration of the importance of these operators, let $T$ be self-adjoint, and let $v\neq 0$ be a $\lambda$-eigenvector of $T$. Then
+$$\gen{Tv, v} = \gen{\lambda v,v} = \lambda \norm{v}^2, \textsf{ but}$$
+$$\gen{Tv, v} = \gen{v, Tv} = \gen{v, \lambda v} = \bar\lambda \norm v^2.$$
+Hence $\lambda = \bar\lambda$, i.e., $\lambda$ is real. We have just established that self-adjoint operators only have real eigenvalues.
+
+Here is an important lemma that will come up later.
+\begin{lemma}
+Let $V$ be an inner product space over $\C$. Then if $\gen{Tv, v} = 0$ for all $v\in V$, then $T = 0$.
+\end{lemma}
+The proof of this lemma is not enlightening, so we will skip it.
+\setc{59}
+\section{Spectral Theorems}
+In this section, our goal is to show that certain types of normal operators are guaranteed to be diagonalizable. As usual, let $V$ be an inner product space over $\F = \R$ or $\C$, and let $T\in\lin(V)$. We start with a theorem.
+\begin{theorem}
+$T$ is normal if and only if $\norm{Tv} = \norm{T^*v}$.
+\end{theorem}
+\begin{proof}
+Let $T$ be normal. Then $\gen{(T^*T - TT^*)v, v} = 0$ as $T^*T - TT^* = 0$, but this means $\gen{T^*Tv, v} = \gen{TT^*v, v}$, so by flipping the operators around, we get $\gen{Tv, Tv} = \gen{T^*v, T^*v}$.
+\end{proof}
+\begin{theorem}
+Let $T$ be normal. If $v\neq 0$ is an $\lambda$-eigenvector of $T$, then $v$ is an $\bar\lambda$-eigenvector of $T^*$.
+\end{theorem}
+\begin{proof}
+Fix $v$ as in the statement. Then $(T-\lambda I)v = 0$, so $\norm{(T-\lambda I)v} = 0$, so we have
+$$0=\gen{(T-\lambda I)v, (T-\lambda I)v} = \gen{v, (T^*-\bar\lambda I)(T-\lambda I)v}.$$
+By normality of $T$, write
+$$0 = \gen{v, (T^*T - \bar\lambda T + \lambda T^* + \lambda\bar\lambda I)v} = \gen{(T^*-\bar\lambda I)v, (T^*-\bar\lambda I)v}.$$
+But this implies $\norm{T^*-\bar\lambda I}v = 0$, so that $v$ is an $\bar\lambda$-eigenvector of $T$.
+\end{proof}
+
+Our next theorem relates normality to orthogonality.
+\begin{theorem}
+Let $T$ be normal with distinct eigenvalues $\alpha \neq \beta$. Then $\alpha$-eigenvectors are orthogonal to $\beta$-eigenvectors.
+\end{theorem}
+\begin{proof}
+Let $u$ resp. $v$ be an $\alpha$- resp. $\beta$-eigenvector. Then $Tu = \alpha u$ ad $Tv = \beta v$. Hence
+$$(\alpha-\beta)\gen{u,v} = \gen{(\alpha-\beta)u, v} = \gen{\alpha u, v} - \gen{u,\bar\beta v} = \gen{Tu, v} - \gen{u,T^*v},$$
+where the last equality follows from Theorem 60.2. Now $\gen{u, T^*v} = \gen{Tu, v}$ by definition of the adjoint, so $(\alpha-\beta)\gen{u,v} = 0 \implies \gen{u,v} = 0$.
+\end{proof}
+\begin{example}
+Let $T\in\lin(\C^2)$ be given by the matrix $\matfour 2{-3}32$. We can verify $TT^* = 13I$, so that $T^* = 13T^{-1}$. Hence $T$ is normal, and the eigenvalues of $T$ are $\lambda_{1,2} = 2\pm 3i$. In the eigenbasis $\set{\frac 1{\sqrt 2}(i, 1), \frac 1{\sqrt 2}(-i, 1)}$, which is orthogonal by the previous theorem, $T$ has the matrix $\diag(2 + 3i, 2-3i)$.
+\end{example}
+In fact, the basis above is orthonormal. This suggests to us this fundamental theorem in linear algebra: normal operators over a complex vector space are diagonalizable.
+\begin{theorem}[Complex Spectral Theorem]
+Let $V$ be a finite-dimensional inner product space over $\C$, and let $T\in\lin(V)$. Then the following are equivalent:
+\begin{enumerate}
+    \item $T$ is normal,
+    \item $V$ has an orthonormal basis of eigenvectors of $T$,
+    \item $T$ is diagonal in some orthonormal basis of $V$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Clearly, $(2)\iff (3)$ holds. We show $(1)\iff (3)$.
+
+$(1)\implies (3)$: Let $T$ be normal. Then $T$ has an upper triangular matrix $A = (a_{ij})$ in some orthonormal basis $\{e_i\}_{i=1}^n$ of $V$. We verify that
+\newpage
+$$\norm{Te_1}^2 = \norm{a_{1,1}e_1}^2 = a_{1,1}\overline{a_{1,1}}, \textsf{ and}$$
+$$\norm{T^*e_1}^2 = \norm{\overline{a_{11}}e_1 + \cdots + \overline{a_{1n}}e_n}^2 = \sum_{j=1}^n \abs{a_{1j}}^2$$
+by taking the conjugate transpose of $A$. But $\norm{Te_1}^2 = \norm{T^*e_1}^2$ by normality and Theorem 60.1, so $a_{1,2} = \cdots = a_{1n} = 0$. This forces $e_2$ to be an $a_{2,2}$-eigenvector of $T$, but by a similar argument, $a_{2,3} = \cdots = a_{2n} = 0$. Continuing inductively, the off-diagonal entries are all $0$, so $A$ is in fact diagonal.
+
+$(3)\implies (1)$: Let $T$ have the matrix $A= \diag(a_1, \ldots, a_n)$ in some orthonormal basis. Taking the conjugate transpose gives a diagonal matrix, and diagonal matrices commute, implying $TT^* = T^*T$.
+\end{proof}
+In the real case, being normal is not sufficient, but $T$ needs to be \textit{self-adjoint} in order for orthonormal diagonalization to be possible.
+\begin{theorem}[Real Spectral Theorem]
+Let $V$ be a finite-dimensional inner product space over $\R$, and let $T\in \lin(V)$. Then the following are equivalent:
+\begin{enumerate}
+    \item $T$ is \textbf{self-adjoint},
+    \item $V$ has an orthonormal basis of eigenvectors of $T$,
+    \item $T$ is diagonal in some orthonormal basis of $V$.
+\end{enumerate}
+\end{theorem}
+\setc{63}
+\section{The Real Spectral Theorem, Positive Operators}
+\subsection*{[7B] Proof of the Real Spectral Theorem}
+In this subsection, we prove Theorem 60.6, so we will assume that $V$ is a finite-dimensional inner product space over $\R$, and $T\in\lin(V)$. The proof is far more complicated, so we need two lemmas.
+\begin{lemma}
+Let $f(x) = x^2+bx+c\in\R[x]$. Then $f$ is irreducible over $\R$ if and only if $b^2 < 4c$. When this happens, if $T\in \lin(V)$ is self-adjoint, then $T^2+bT+cI$ is invertible.
+\end{lemma}
+\begin{proof}
+The first part is just high school algebra: check the discriminant of the quadratic. We will show that $\gen{(T^2 + bT + cI)v, v} > 0$ whenever $v\neq 0$ to show that $T^2+bT+cI$ has nontrivial kernel. Fix $v\neq 0$, and let $T = T^*$. We compute
+\begin{align*}
+\gen{(T^2+bT+cI)v, v} &= \gen{T^2v, v} + b\gen{Tv, v} + c\gen{v,v} \\
+&= \gen{Tv, Tv} + b\gen{Tv, v} + c\gen{v,v} \\
+&\geq \norm{Tv}^2 + c\norm{v}^2 - \abs b\norm{Tv} \norm v \textsf{ (Cauchy-Schwarz)} \\
+&= \paren{\norm{Tv} - \frac{|b|\norm v}2}^2 + \paren{ c - \frac{b^2}4}\norm v^2 > 0 \textsf{ as } b^2<4c.
+\end{align*}
+Hence $\ker(T^2+bT+cI) = \set0$, so $T^2+bT+cI$ is invertible.
+\end{proof}
+
+We now state the second lemma we will use. \newpage
+\begin{lemma}
+Suppose $T = T^*$ and $U\leq V$ is $T$-invariant. Then the following hold:
+\begin{enumerate}
+    \item $U^\perp$ is $T$-invariant;
+    \item $T|_U$ is self-adjoint;
+    \item $T|_{U^\perp}$ is self-adjoint.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+Of course, $(2)$ and $(3)$ hold immediately by definition: $T = T^*$ on all of $V$, so the restrictions on the subspaces are equal. For $(1)$, we fix $v\in U$ and $u\in U^\perp$. If suffices to show $\gen{v, Tu} = 0$, i.e., $Tu\in U^\perp$. But $\gen{v, Tu} = \gen{T^*v, u} = \gen{Tv, u} = 0$, as $Tv\in U$ by assumption.
+\end{proof}
+
+We are now ready to prove the Real Spectral Theorem.
+\begin{proof}
+We prove $(1)\implies (2)$ in Theorem 60.6. The rest is easy.
+
+We proceed by induction on the dimension of $V$. The one-dimensional case is obvious, and suppose the theorem holds for all vector spaces with dimension at most $n-1$, for some $n\in\N$. Now, let $\dim V := n$. Start with some $v\neq 0$, and consider the set $\set{v, Tv, T^2v, \ldots, T^nv}$, which is linearly dependent by counting. Hence, there exist nontrivial $a_i\in \R$, $0\leq i\leq n$, with $a_0v + a_1Tv + \cdots + a_nT^nv = 0$. Let $p(x) = a_0 + a_1x + \cdots + a_nx^n\in\R[x]$. By the Fundamental Theorem of Algebra, $\C$ is a splitting field for $p$, so write
+$$p(x) = \brak{\prod_{\lambda_i\in\R} (x - \lambda_i )}\brak{\prod_{\mu_j\in\C\setminus\R} (x - \mu_j)}.$$
+Since $p(x)\in\R[x]$, complex conjugation is an automorphism of $\R[\mu_j]$, so $\overline{\mu_j}$ is also a root\footnote{This is just a fancy way of expressing the Conjugate Roots Theorem from high school algebra.} for $p$ for any possible choice of $j$. It follows that $(x-\mu_j)(x-\overline{\mu_j}) = x^2  + \abs{\mu_i}^2\in\R[x]$ is an irreducible real factor of $p$, by Lemma 64.1. Hence, we can rewrite our factorization as
+$$p(x) = \brak{\prod_{\lambda_i\in\R} (x-\lambda_i)} \prod_k q_k(x),$$
+where the $q_k$ are irreducible quadratics in $\R[x]$. It follows by Lemma 64.1 that $q_k(T)$ is invertible, so that $\prod q_k(T)$ is also invertible. But $p(T)v = 0$, so at least one of the $(T-\lambda_iI)$'s must be uninvertible, so we have found a \textbf{real} eigenvalue $\lambda$ for $T$.
+
+Now, let $u_1\in V$ be an $\lambda$-eigenvector of norm $1$ of $T$. Set $U := \Span(u_1) < V$; clearly, $U$ is $T$-invariant. By Lemma 64.2, $U^\perp$ is $T$-invariant, and by construction $V = U\oplus U^\perp$. Applying the inductive hypothesis on $U^\perp$, we write $U^\perp = \Span(u_2, \ldots, u_n)$, where the $u_i$ are orthonormal eigenvectors of $T|_{U^\perp}$, and hence are eigenvectors of $T$. Hence $\{u_1, \ldots, u_n\}$ is an orthonormal basis of eigenvectors of $T$.
+\end{proof}
+\subsection*{Examples}
+\begin{example}
+Let $V = \R^2$ and let $T$ be given by the matrix $A = \matfour accb$, for $a,b,c\in\R$. Now $\det(A - \lambda I) = \lambda^2 - \lambda (a+b) + (ab-c^2)$. The discriminant of this polynomial is $\Delta = (a-b)^2 + 4c^2\geq 0$. If $\Delta > 0$, then we two distinct eigenvalues, so we can diagonalize. If $\Delta = 0$, then our matrix is already diagonalized.
+\end{example}
+\newpage
+\begin{example}
+Let $A = \matnine{14}{-13}8 {-13}{14}8 88{-7}$. By inspection, $A$ is self-adjoint, and hence normal, so the Real Spectral Theorem states that this matrix is diagonalizable. Indeed, we can verify that
+$$\set{\frac {(1,-1,0)}{\sqrt 2}, \frac{(1,1,1)}{\sqrt 3}, \frac{(1,1,-2)}{\sqrt 6}}$$
+is a basis of $\R^3$ under which $A$ is a diagonal matrix.
+\end{example}
+\subsection*{[7C] Positive Operators}
+We will assume that $V$ is a finite-dimensional inner product space over $\F = \R$ or $\C$, and $T\in \lin(V)$.
+\begin{definition}
+An operator $T\in\lin(V)$ is \textit{positive} if $T$ is self-adjoint and $\gen{Tv, v}\geq 0$ for all $v\in V$.
+\end{definition}
+Positive operators are useful, as it turns out that all eigenvalues of a positive $T$ are non-negative. Hence, ``positive" operators should really be called ``non-negative" operators.
+\begin{lemma}
+If $T\in\lin(V)$ is positive, then the following hold:
+\begin{enumerate}
+    \item $T$ only has non-negative eigenvalues;
+    \item There exists a self-adjoint operator $S$ satisfying $S^2 = T$.
+\end{enumerate}
+If this is the case, we say that $S$ is a square root of $T$.
+\end{lemma}
+\begin{proof}
+$(1)$: By the Spectral Theorem, $T$ has a diagonal matrix $A:=\diag(\lambda_1, \ldots, \lambda_n)$, where the $\lambda_i$ are \textit{real}, with respect to some orthonormal eigenbasis $\{u_i\}_1^n$. Hence $0\leq\gen{Tu_i, u_i} = \lambda_i$.
+
+$(2)$: Fix the same diagonal matrix $A$ as above. Let $S$ have the matrix $\diag(\sqrt{\lambda_1}, \ldots, \sqrt{\lambda_n})$ with respect to the same orthonormal eigenbasis. Clearly $S^2 = T$ and $S^* = S$.
+\end{proof}
+\setc{66}
+\section{Spectral Theorems: Worked Examples}
+As usual, assume $V$ is a finite-dimensional inner product space over $\F = \R$ or $\C$, and let $T\in \lin(V)$.
+\begin{example}
+Let $\F = \C$, and let $T\in\lin(V)$ be normal. Prove that $T$ is self-adjoint if and only if its eigenvalues are all real.
+\end{example}
+\begin{proof}
+$(\implies)$: Suppose that $T$ is self-adjoint. By the Complex Spectral Theorem (CST), $T$ has a diagonal matrix in an orthonormal eigenbasis of $V$, say $M_T = \diag(\lambda_1, \ldots, \lambda_n)$. Now, the matrix of $T^*$ is the conjugate transpose, but this must coincide with $M_T$. Hence $\lambda_i = \overline{\lambda_i}$ for all $i\leq n$, so $\lambda_i\in\R$.
+
+$(\impliedby)$: Suppose $T$ is normal, and all its eigenvalues are real. By CST, $T$ has a diagonal matrix $A = \diag(\lambda_1, \ldots, \lambda_n)$, where the $\lambda_i$ are eigenvalues of $T$. Taking the conjugate transpose of $A$ does nothing, so $T = T^*$.
+\end{proof}
+\begin{example}
+Give an alternate proof to the $(\implies)$ direction of Ex. 67.1 without the CST.
+\end{example}
+\begin{proof}
+Suppose $T$ is self-adjoint. If $v\neq 0$ is a $\lambda$-eigenvector of $T$, we have $\gen{Tv, v} = \lambda\norm v^2$. But $\gen{Tv, v} = \gen{v, Tv} = \bar\lambda\norm v^2$, so $\lambda = \bar\lambda \implies \lambda\in\R$.
+\end{proof}
+\newpage
+\begin{example}
+Let $\F = \C$, and let $T\in\lin(V)$ be normal, satisfying $T^8 = T^9$. Show that $T$ is self-adjoint and idempotent.
+\end{example}
+\begin{proof}
+By the CST, find an $\lambda$-eigenvector $e\neq 0$ of $T$. Now $T^8=T^9$ implies $T^8e = T^9e \iff \lambda^8 e = \lambda^9e$, so that $\lambda^8(\lambda-1)e = 0$. This implies $\lambda = 0,1$, so $T$ can only have $0$ or $1$ as eigenvalues. Hence, the matrix of $T$ is $B = \diag(b_1, \ldots, b_n)$, where each $b_i$ is binary (either $0$ or $1$). Clearly, $B^2 = B$ and $B$ is self-adjoint.
+\end{proof}
+\begin{example}
+Let $T\in\lin(V)$ be normal on $\C$. Prove that there exists an $S\in\lin(V)$ such that $S^2 = T$.
+\end{example}
+\begin{proof}
+By the CST, find a basis of $T$ such that $T$ has the matrix $\diag(\lambda_1, \ldots, \lambda_n)$, where we have $\lambda_i\in\C$. Square roots always exist over complex numbers, so simply set $S$ to have the matrix $\diag(\sqrt{\lambda_1}, \ldots, \sqrt{\lambda_n})$.
+\end{proof}
+\begin{example}
+Give an example of a real vector space $V$, some $T\in\lin(V)$, some $b,c\in\R$, such that $b^2 < 4c$ yet $T^2+bT+cI$ is uninvertible.
+\end{example}
+\begin{proof}
+To keep things simple, set $b=0$ and $c=1$, and $V= 
+\R^2$. Then $0<4$, so $b^2 <4c$, and we have $T^2 + bT + cI = T^2 + I$. It would be nice if we had $T^2 + I = 0$. Luckily, this is possible: set $T$ to be the rotation by $\pi/2$, which has matrix $\matfour 0{-1}{1}0$.
+\end{proof}
+We remark that the above example shows that the \textit{self-adjoint} condition in Lemma 64.1 and hence in the Real Spectral Theorem are crucial for those statements to be true.
+
+\setc{69}
+\section{Positive Operators and Isometries}
+In the proof of Lemma 64.6, the square root $S$ we chose was in fact a positive operator. This leads us to the following statement.
+
+Of course, we will continue to assume that $V$ is a finite-dimensional inner product space over $\F = \R$ or $\C$, and that $T\in\lin(V)$.
+\begin{lemma}
+If $T$ is positive, then it has a unique positive square root.
+\end{lemma}
+The proof is not too enlightening, so we will skip it. However, this allows us to introduce the notation $\sqrt T$ for the unique positive square root of $T$, assuming that $T$ is also positive.
+\subsection*{[7C] Isometries}
+Recall from Definition 58.3 that an operator is an \textit{isometry} if $T^* = T^{-1}$. Alternatively, we can define an isometry as follows.
+\begin{definition}
+$T\in\lin(V)$ is an \textit{isometry} if it preserves norms; i.e., $\norm{Tv} = \norm v$ for all $v\in V$.
+\end{definition}
+
+The proof of the next lemma is also not enlightening, so we will skip it as well.
+\begin{lemma}
+Let $T\in\lin(V)$. Then $T$ is an isometry if and only if $\gen{Tv, Tw} = \gen{v, w}$ for all $v,w\in V$.
+\end{lemma}
+
+Now, we show that Definitions 58.3 and 70.2 are equivalent.
+\begin{proposition}
+Let $T\in\lin(V)$. Then $\norm{Tv} = \norm v$ if and only if $T^* = T^{-1}$.
+\end{proposition}
+\begin{proof}
+Pick any $v\in V$. Then $\gen{v,v} = \gen{Tv, Tv} = \gen{T^*Tv, v}$ by Lemma 70.3. Define the operator $S$ by $S := I - T^*T$. Now, $\gen{v,v} - \gen{T^*Tv,v} = 0$, so $\gen{Sv, v} = 0$. But $S^* = I^* - (T^*T)^* = I - T^*T=S$, so $S$ is self-adjoint. By the CST, $\gen{Sv,v}=0$ implies that $0$ is an eigenvalue, so $S=0$, so $TT^* = I$. The other direction is similar.
+\end{proof}
+\begin{corollary}
+If $T$ is an isometry, then $T$ is normal.
+\end{corollary}
+
+The next proposition allows us to classify isometries.
+\begin{proposition}
+If $T$ is an isometry, then if $v\neq 0$ is a $\lambda$-eigenvector of $T$, then $|\lambda| = 1$.
+\end{proposition}
+\begin{proof}
+Write $\gen{v,v} = \gen{Tv, Tv} = \gen{\lambda v,\lambda v} = |\lambda|^2\gen{v,v}$, so $|\lambda| = 1$.
+\end{proof}
+\begin{theorem}
+Let $\set{e_i}_1^n\subset V$ be an orthonormal basis, and let $\set{\lambda_i}_1^n\subset \C$ with $|\lambda_i| = 1$. Define the operator $S$ by $Se_i = \lambda_ie_i$ for each basis vector. Then $S$ is an isometry.
+\end{theorem}
+\begin{proof}
+Take $v = \sum_i a_ie_i$. Then $\gen{v,v} = \sum |a_i|^2$ by orthonormality. Now
+$$\gen{Sv, Sv} = \sum_{i=1}^n |a_i\lambda_i|^2 = \sum_{i=1}^n |a_i|^2|\lambda_i|^2 = \sum_{i=1}^n |a_i|^2.$$
+Hence $\gen{v, v} = \gen{Sv, Sv}$, so $S$ is an isometry.
+\end{proof}
+\begin{corollary}
+If $S$ is an isometry and $\set{e_i}_1^n$ is an orthonormal basis of $V$, then $\set{Se_i}_1^n$ is also an orthonormal basis of $V$.
+\end{corollary}
+\setc{72}
+\section{Positive Operators: Worked Examples}
+[The numbers in parentheses next to each Example number below refers to the textbook exercise number.]
+\begin{example}[7C.5]
+Prove that the sum of two positive operators is positive.
+\end{example}
+\begin{proof}
+Let $S, T$ be positive operators over an inner product space $V$. Then $S, T$ are self-adjoint and $\gen{Sv, v}, \gen{Tv, v}\geq 0$ for every $v\in V$. Now
+$$\gen{(S+T)v, v} = \gen{Sv + Tv, v} = \gen{Sv, v} + \gen{Tv, v} \geq 0 + 0 = 0,$$
+so this completes the proof after noting that $(S+T)^* = S^* + T^* = S+T$.
+\end{proof}
+\begin{example}[7C.6]
+Suppose that $T\in\lin(V)$ is positive. Prove that $T^k$ is positive for every positive integer $k$.
+\end{example}
+\begin{proof}
+Let $T$ be positive, and fix $k\in\Z^+$. Then $T$ is self-adjoint, so we immediately see that $T^k$ is self-adjoint. Since $T$ is positive, all of its eigenvalues are non-negative, so fix an eigenbasis of $V$. Then $T$ has a diagonal matrix $\diag(\lambda_1, \ldots, \lambda_n)$. Clearly, $T^k$ has the matrix $\diag(\lambda_1^k, \ldots, \lambda_n^k)$, and since $\lambda_i\geq 0$, $\lambda_i^k \geq 0$. Then by Theorem 7.35 in the text, $T^k$ is positive.
+\end{proof}
+\begin{example}[7C.7]
+Suppose that $T\in\lin(V)$ is positive. Prove that $T$ is invertible if and only if $\gen{Tv, v} > 0$ for every $v\in V\setminus 0$. 
+\end{example}
+\begin{proof}
+Suppose $T$ is positive, and suppose $\gen{Tv, v} > 0$ for every $v\in V\setminus 0$. Certainly, this implies $Tv \neq 0$, so $T$ has trivial kernel and is thus invertible.
+
+Now, suppose $T$ is invertible and positive. Then there exists some $S$, also positive, such that $S^2 = T$. Now for any $v\in V\setminus 0$, $\gen{Tv, v} = \gen{S^2v,v} = \gen{Sv, Sv} = \norm{Sv}^2 > 0$.
+\end{proof}
+\begin{example}[7C.9]
+Prove or disprove: the identity operator on $\F^2$ has infinitely many square roots.
+\end{example}
+\begin{proof}
+This is true: fix $\theta\in [0, \pi)$, and define $T_\theta$ to be the reflection about the line with angle $\theta$ to the $x$-axis. It is easy to check that $T_\theta$ is self-adjoint, and that $T_\theta^2 = I$.
+\end{proof}
+\setc{76}
+\section{Singular Values: Worked Examples}
+
+[The material here is covered in Section 78, so that should be read first. This discussion section was ahead of the lecture.]
+\begin{example}
+Suppose $T\in\lin(V)$, $S\in\lin(V)$ is an isometry, and $R\in\lin(V)$ is a positive operator such that $T=SR$. Prove that $R=\sqrt{T^*T}$.
+\end{example}
+\begin{proof}
+We want to introduce a $T^*$ into our equation, so we take adjoints and find that $T^* = R^*S^* = R^*S^{-1}$. Hence
+$$T^*T = R^*S^{-1}SR = R^*R = R^2,$$
+as $R$ is positive, hence self-adjoint. As $T^*T$ is positive, this implies $\sqrt{T^*T} = R$.
+\end{proof}
+\begin{example}
+Suppose $T\in\lin(V)$ is self-adjoint. Prove that the singular values of $T$ equal the absolute values of the eigenvalues of $T$, repeated appropriately.
+\end{example}
+\begin{proof}
+Pick an orthonormal eigenbasis $\{e_i\}$ of $T$. Then $Te_i = \lambda_ie_i$, where the $\lambda_i$ are the eigenvalues, possibly repeated, of $T$. Because $T$ is self-adjoint, we see that $T^*Te_i = T^2e_i = \lambda_i^2e_i$, so by selecting the positive square root, we see that $\sqrt{T^*T}e_i = |\lambda_i|e_i$, so we are done.
+\end{proof}
+\begin{example}
+Suppose $T\in\lin(V)$. Prove that $T$ is invertible if and only if $0$ is not a singular value of $T$.
+\end{example}
+\begin{proof}
+$(\implies)$: Suppose $T$ is invertible. Then $T^*$ is also invertible, so $T^*T$ is invertible, which forces $\sqrt{T^*T}$ to be invertible. This means that $0$ is not an eigenvalue of $\sqrt{T^*T}$, so we are done.
+
+$(\impliedby)$: Reverse everything from the preceding argument.
+\end{proof}
+\section{Polar and Singular-Value Decompositions}
+Our goal in this section is to develop a decomposition of a matrix that is diagonal, but we allow ourselves to use two different bases of the same vector space. Assume our usual assumptions: that $V$ is a finite-dimensional inner product space over $\F = \R$ or $\C$, and let $T\in\lin(V)$.
+\begin{theorem}[Polar Decomposition]
+Suppose $T\in\lin(V)$. Then there exists an isometry $S\in\lin(V)$ such that $T = S\sqrt{T^*T}$.
+\end{theorem}
+\begin{proof}
+See [7D] in the text.
+\end{proof}
+We now view an example of finding a polar decomposition of a matrix. \newpage
+\begin{example}
+Let $T = \matfour 1a00 \in \lin(\R^2)$. Then $T^* = \matfour 10a0$, so $T^*T = \matfour 1aa{a^2}$. We check that $T^*T$ has eigenvalues $(1+a^2)$ and $0$, and an orthonormal eigenbasis of $\R^2$ is
+$$e_1 = \sqrt{a^2+1}(1, a), e_2 = \frac{(-a, 1)}{\sqrt{a^2+1}}.$$
+Thus, $T^*T$ maps $e_1 \mapsto (a^2+1)e_1$ and $e_2 \mapsto 0$. This means $\sqrt{T^*T}$ maps $e_1 \mapsto \sqrt{a^2+1}e_1$ and $e_2\mapsto 0$. Using this, we can find a matrix for $\sqrt{T^*T}$. If $\sqrt{T^*T} = \matfour xzzy$,\footnote{...and we are allowed to assume this as $\sqrt{T^*T}$ is by definition positive, and thus self-adjoint, and thus its matrix is symmetric.} we have
+$$\matfour xzzy\vect 1a = \sqrt{a^2+1}\vect 1a \textsf{ and } \matfour xzzy\vect {-a}1 = \vect 00.$$
+This yields $z=ax$ and $y=az$, so $\sqrt{T^*T} = \matfour x{ax}{ax}{a^2x}$. This gives $(1+a^2)x = \sqrt{1+a^2} \implies x = (1+a^2)^{-1/2}$, so we have found the matrix for $\sqrt{T^*T}$. Now, $\im T = \R\vect 1a$, so we define a transformation $S_1: \im \sqrt{T^*T} \to \im T$ by $S(\sqrt{T^*T}v) \mapsto Tv$. We have
+$$S_1\vect 1a = T\brak{\frac{(1,a)}{\sqrt{a^2+1}}} = \frac 1{\sqrt{a^2+1}}\matfour 1a00 \vect 1a = \sqrt{a^2+1}\vect 10.$$
+Now, define $S_2: (\im\sqrt{T^*T})^\perp \to (\im T)^\perp$, which is a map $S_2: \R\cdot e_2 \to \R\vect 01$ by $S_2e_2 = (0,1)$. Referring to page 235 in the text, we see that $S = \boxed{\frac 1{\sqrt{a^2+1}}\matfour 1a{-a}1}$.
+\end{example}
+
+The Polar Decomposition allows us to arrive at a nicer diagonalization, which uses two different bases for one space.
+\begin{definition}
+Let $T\in\lin(V)$. The \textit{singular values} of $T$ are the eigenvalues of $\sqrt{T^*T}$.
+\end{definition}
+\begin{theorem}[Singular Value Decomposition]
+Let $T$ have the singular values $s_1, \ldots, s_n$. Then, there exist orthonormal bases $\set{e_1, \ldots, e_n}$, $\set{f_1, \ldots, f_n}$ of $V$ such that
+$$Tv = \sum_{i=1}^n s_i\gen{v, e_i}f_i \textsf{ for every } v\in V.$$
+Alternatively, $T$ has a diagonal matrix with respect to these two different bases.
+\end{theorem}
+\begin{proof}
+By the Polar Decomposition, write $T= S\sqrt{T^*T}$, where $S$ is an isometry. By the Spectral Theorem, find an orthonormal basis $\set{e_i}_1^n$ of $V$ such that $\sqrt{T^*T}(e_i) = s_ie_i$. Define $f_i := Se_i$. Now, $S$ is an isometry, so by Corollary 70.8, $\set{f_i}_1^n$ is also an orthonormal basis of $V$. Now, pick $v\in V$, so that $v = \sum_i \gen{v, e_i}e_i$. Since
+$$\sqrt{T^*T}v= s_1\gen{v, e_1}e_1 + \cdots + s_n\gen{v, e_n}e_n, \textsf{ we have}$$
+$$Tv = S\sqrt{T^*T}v = s_1\gen{v, e_1}f_1 + \cdots + s_n\gen{v, e_n}f_n,$$
+completing the proof.
+\end{proof}
+\newpage
+\setc{79}
+\section{Generalized Eigenvectors}
+In this section, we have no need of inner products, so we will just assume that $V$ is a finite-dimensional vector space over $\C$.
+\begin{definition}
+An operator $N\in\lin(V)$ is \textit{nilpotent} if there exists some $k\in\N$ such that $N^k = 0$. The minimum of all such $k$ is called the \textit{nilpotency degree} of $N$.
+\end{definition}
+
+Before we proceed further with this definition, let us verify some easy facts about the kernels of powers of transformations.
+\begin{lemma}
+If $T\in\lin(V)$, and if there exists an $m\in\N$ such that $\ker T^m = \ker T^{m+1}$, then
+$$\ker T^m = \ker T^{m+1} = \ker T^{m+2} = \cdots.$$
+\end{lemma}
+\begin{proof}
+Certainly, for any $j\in\N$ we have $\ker T^{m+j} \leq \ker T^{m+j+1}$. Now, fix $v\in \ker T^{m+j+1}$. The $T^{m+1}(T^jv) = 0$, so $T^jv \in \ker T^{m+1} = \ker T^m$ by assumption, so that $T^m(T^jv) = 0 \iff T^{m+j}v = 0$, so $v\in \ker T^{m+j}$. Hence, we are done.
+\end{proof}
+
+\begin{proposition}
+Let $T\in\lin(V)$. Then the chain of subspaces
+$$\{0\} = \ker T^0 \leq \ker T\leq \ker T^2 \leq \ker T^3 \leq \cdots$$
+satisfies the {ascending chain condition}: i.e., there exists an $n\in\N$ such that
+$$\ker T^{n-1}\leq \ker T^n = \ker T^{n+1} = \ker T^{n-2} = \cdots.$$
+In fact, such $n$ satisfies $n \leq \dim V$.
+\end{proposition}
+\begin{proof}
+Suppose otherwise. By Lemma 80.2, we see that we must have strict inclusions
+$$\ker T^0 < \ker T^1 < \ker T^2 < \cdots,$$
+so the dimensions must keep increasing:
+$$0 = \dim\ker T^0 < \dim \ker T^1 < \dim \ker T^2 < \cdots.$$
+But this is impossible as $\ker T^k \leq V$, and $V$ is finite-dimensional by our assumption at the beginning of this section.
+\end{proof}
+
+We continue exploring nilpotency.
+\begin{lemma}
+Let $N\in\lin(V)$ be nilpotent. Then $N$ has an upper triangular matrix with all zeros on the diagonal, for some basis of $V$.
+\end{lemma}
+\begin{proof}
+Build a basis of $\ker N$, say $\set{e_i}_1^k$, and extend this to a basis $\set{e_i}_1^\ell$ of $\ker N^2$, then to a basis $\set{e_i}_1^m$ of $\ker N^3$, and so on until we hit the nilpotency degree of $N$. Then $Ne_1 = Ne_2 = \cdots = Ne_k = 0$, and $Ne_{k+1}, \ldots, N_\ell \in \ker N$, and $Ne_{\ell+1}, \ldots, Ne_m\in \ker N^2$, and so on. This constructs an upper-triangular matrix with $0$ on the diagonal. Of course, this process terminates as per Proposition 80.3.
+\end{proof}
+
+This allows us to consider an important class of kernels.
+\begin{definition}
+Let $\lambda$ be an eigenvalue for some $T\in\lin(V)$. then the \textit{generalized eigenspace corresponding to $\lambda$} is
+$$G(\lambda, T) := \ker(T-\lambda I)^n.$$
+The nonzero vectors in $G(\lambda, T)$ are \textit{generalized $\lambda$-eigenvectors} of $T$.
+\end{definition}
+\newpage
+Immediately, we have an important fact.
+\begin{theorem}
+Let $T$ have distinct eigenvalues $\lambda_1, \ldots, \lambda_m$, and let $v_i$ be generalized $\lambda_i$-eigenvectors of $T$. Then $\set{v_1, \ldots, v_m}$ is linearly independent.
+\end{theorem}
+\begin{proof}
+Suppose we had a linear combination summing to zero: $a_1v_1 + \cdots + a_nv_n = 0$, for $a_i\in\C$. Set $k\in\N$ to be the largest natural number with $(T - \lambda_1 I)^k v_1 \neq 0$; such a number must exist as $v_1$ is a generalized eigenvector, so at least $(T-\lambda_1I)^nv_1 = 0$. If $w := (T - \lambda_1I)^k v$, then $(T-\lambda_1)w = 0 \iff Tw = \lambda_1w$.
+
+Now, consider some $\lambda\neq \lambda_1$. We see that $(T-\lambda I)w = (\lambda_1 - \lambda)w$, so that $(T-\lambda I)^nw = (\lambda_1-\lambda)^nw$. Applying the product $(T-\lambda_1)^k\prod_{j\geq 2} (T-\lambda_jI)^n$ to our linear combination, we see
+$$0 = a_1(T-\lambda_1)^k(T-\lambda_2I)^n \cdots (T-\lambda_mI)^nv_1$$
+as the other terms are annihilated by the $(T-\lambda_jI)^n$. Now, by commutativity and the above discussion
+$$0 = a_1(T-\lambda_2I)^n\cdots (T-\lambda_mI)^n = a_1(\lambda_1-\lambda_2)^n \cdots (\lambda 1- \lambda_m)^n w.$$
+Since $\lambda_1\neq \lambda_j$ for any $j\geq 2$, we see that $a_1=0$. This argument is not unique for $\lambda_1$, so replacing $\lambda_1$ with $\lambda_\ell$ show that $a_\ell =0$, so our list is linearly independent.
+\end{proof}
+
+From this, we can see that the $G(\lambda_i, T)$, when summed together, form a direct sum. The next proposition is extremely useful in the proofs we will see later.
+\begin{proposition}
+Let $T\in\lin(V)$ and let $\lambda$ be an eigenvalue for $T$. Then $G(\lambda, T)$ is a $T$-invariant subspace.
+\end{proposition}
+\begin{proof}
+By definition, we have $G(\lambda, T) = \ker (T-\lambda I)^n$. Set $f(x) = (x - 1)^n \in \C[x]$, and apply Lemma 18.7.
+\end{proof}
+\setc{83}
+\section{The Generalized Eigenspace Decomposition}
+Assume that $V$ is a finite-dimensional vector space over $\C$. We remarked above that the generalized eigenspaces for an operator $T$ form a direct sum, and that each generalized eigenspace is $T$-invariant. In fact, this direct sum covers the whole space, as we shall see. We prove a short proposition first.
+\begin{proposition}
+Let $\dim V =: n$. Then for any operator $T\in\lin(V)$, we have $\ker T^n \oplus \im T^n$.
+\end{proposition}
+\begin{proof}
+Let $v\in \ker T^n \cap \im T^n$. Then $T^nv = 0$ and there exists some $w\in V$ such that $v = T^nw$. Hence $T^{2n}w = 0$, so $w \in \ker T^{2n} = \ker T^n$ by way of Proposition 80.3. This means $v=0$. Now, the equality $V = \ker T^n + \im T^n$ is given by the Rank-Nullity Theorem.
+\end{proof}
+
+What follows is arguably one of the most important theorems in the course.
+
+\begin{theorem}[Generalized Eigenspace Decomposition]
+Let $V$ be a finite-dimensional vector space over $\C$, $T\in\lin(V)$, and let $\lambda_1, \ldots, \lambda_k$ be the distinct eigenvalues of $T$. Then
+$$V = G(\lambda_1, T) \oplus\cdots \oplus G(\lambda_k, T),$$
+and the operators $(T-\lambda_jI)|_{G(\lambda_j, T)}$, $1\leq i\leq k$, are all nilpotent.
+\end{theorem}
+\begin{proof}
+That the operators $(T-\lambda_jI)|_{G(\lambda_j, T)}$ are nilpotent follows from the definition of $G(\lambda_j, T)$, that they are the kernel of some operator power. \newpage
+
+For the decomposition part of the theorem, we induct on the dimension of $V$. If $V$ is one-dimensional, we have $V = G(\lambda_1, T)$. Now, assume the inductive hypothesis and assume the theorem holds for all vector spaces with dimension at most $n-1$. Now, let $\dim V = n$, and write $V = W\oplus U$, where $W := G(\lambda_1, T) = \ker(T - \lambda_1 I)^n$. By Proposition 84.1, we immediately have $U = \im(T-\lambda_1 I)^n$. We know $\dim W \leq 1$, so $\dim U =: m \leq n-1$. By Lemma 18.7 and Proposition 80.7, both $U$ and $W$ are $T$-invariant, so by the inductive hypothesis, write
+$$U = G(\lambda_2, T|_U) \oplus \cdots \oplus G(\lambda_k, T|_U).$$
+All of the generalized $\lambda_1$-eigenvectors lie in $W$, so we see $\lambda_1 \not\in \{\lambda_2, \ldots, \lambda_k\}$ (so what we are doing is legal). Now, we show $G(\lambda_i, T|_U) \subseteq G(\lambda_i, T)$, for $i\geq 2$. The forward inclusion is obvious, so take $v\in G(\lambda_i, T)$. By our decomposition, we have
+$$v = v_1 + v_2 + \cdots + v_k,$$
+where $v_1\in W$ and $v_i\in G(\lambda_i, T|_U)$ for $i\geq 2$. Then $0 = v_1 + v_2 + \cdots + (v_i - v) + v_{i+1} + v_k$ for some $i\geq 2$, and each term is in its own $G(\lambda_j, T)$. But generalized eigenvectors for distinct eigenvalues are linearly independent, so we must have $v_j = 0$, $j\neq i$ and $v = v_i \in G(\lambda_i, T|_U)$. Hence $V = G(\lambda_1, T) \oplus G(\lambda_2, T) \oplus \cdots \oplus G(\lambda_k, T)$.
+\end{proof}
+
+The following is a restatement of our main theorem.
+\begin{corollary}
+If $T\in\lin(V)$, then $V$ has a basis of generalized eigenvectors of $T$.
+\end{corollary}
+
+The following may also be of use.
+\begin{lemma}
+If $T\in \lin(V)$ has eigenvectors $\lambda_1, \ldots, \lambda_k \neq 0$, then $T$ has a square root.
+\end{lemma}
+\begin{proof}
+Since each $G(\lambda_i, T)$ is $T$-invariant, write $G(\lambda_i, T)$ as a direct sum of the $G(\lambda_j, T|_{G(\lambda_i, T)})$ by the Generalized Eigenspace Decomposition (GED). Now, set $N := T - \lambda I$. Then $N^{\dim V= 0}$, thus $T = \lambda I+N = \lambda (I + N/\lambda)$. Without loss of generality, if $\lambda = 1$, we have $T = I+N$ so use the power series representation
+$$\sqrt{I+N} = I + a_1T + a_2T^2 + a_3T^3 + \cdots,$$
+which terminates by nilpotency.
+\end{proof}
+\begin{example}
+Let $T = \matnine 634 062 007$. We can read off the eigenvalues: $\lambda_1 =6$ and $\lambda_2 = 7$. Thus $T- 6I = \matnine 034 002 001$, so we see $(T-6I)^2 = \matnine 00{10} 002 001$. Hence
+$$G(6, T) = \Span((1,0,0), (0,1,0)) \textsf{ and } G(7, T) = \Span((10, 2, 1)).$$
+\end{example}
+\setc{89}
+\section{Characteristic Polynomials}
+In this section, $V$ denotes a finite-dimensional vector space over $\C$, and $T\in\lin(V)$. By the GED, write
+$$V = G(\lambda_1, T) \oplus \cdots G(\lambda_m, T),$$
+where the $\lambda_i$ are distinct, and define $d_i := \dim G(\lambda_i, T)$.
+\newpage
+\begin{definition}
+Let $T\in\lin(V)$ and fix notation as in the beginning of this section. The \textit{characteristic polynomial} of $T$ is $q_T(x) := \ds\prod_{i=1}^m (x - \lambda_i)^{d_i} \in \C[x]$.
+\end{definition}
+\begin{theorem}[Cayley-Hamilton Theorem]
+Let $T\in\lin(V)$, and let $q_T(x)$ be the characteristic polynomial of $T$. Then $q_T(T) = 0$.
+\end{theorem}
+\begin{proof}
+Write $V = G(\lambda_1, T)\oplus \cdots\oplus G(\lambda_m, T)$ by the GED. Each subspace is $T$-invariant, so by choosing bases on these subspaces, we put $T$ into \textit{block-diagonal form}, with matrix $M_T := \diag(D_1, \ldots, D_m)$, where $D_i$ has size $d_i\times d_i$ and is the matrix of $T|_{G(\lambda_i, T)}$. Now $M_T^k = \diag(D_1^k,\ldots, D_m^k)$, so $q(M_T) = \diag(q(D_1), \ldots, q(D_m))$, and $q(D_i) = (D_i - \lambda_i I)^{d_i}$. Hence, it suffices to show that $(D_i - \lambda_iI)^{d_i} = 0$. But $\ker(D_i - \lambda_iI)^{d_i} = G(\lambda_i, T)$ by definitions, so by the GED, we are done. 
+\end{proof}
+\begin{example}
+Let $T = \matnine 634 062 007$. Then $q_T(x) = (x-6)^2 (x-7)$, and we can check that
+$$q_T(T) = \matnine 034 002 001^2 \matnine {-1}34 0{-1}2 000 = \matnine 00{10} 002 001 \matnine {-1}34 0{-1}2 000 = \mathbf 0_{3\times 3},$$
+as predicted by the Cayley-Hamilton Theorem.
+\end{example}
+\begin{example}
+Let $T := \diag(6,6,7)$. Then $q_T(x) = (x-6)^2 (x-7)$, but if $m(x) := (x-6)(x-7)$, we see $m(T) = 0$. This highlights a possible issue with the characteristic polynomial: it is not necessarily of minimal degree.
+\end{example}
+To fix that issue, we make the following definition.
+\begin{definition}
+Let $T\in\lin(V)$. The \textit{minimal polynomial} of $T$ is the monic polynomial $m_T(x)$ of smallest degree satisfying $m_T(T) = 0$.
+\end{definition}
+
+The following theorems are not unlike propositions in ring theory (Math 120B).
+\begin{theorem}
+Let $T\in\lin(V)$. Then the minimal polynomial $m_T$ is unique, and $m_T$ and $q_T$ have the exact same roots.
+\end{theorem}
+\begin{proof}
+In view of Theorem 90.2, a minimal polynomial exists. Suppose $m_1, m_2$ are minimal polynomials of $T$. Write $m_1(x) = a_0 + a_1x + \cdots + x^k$ and $m_2(x) = b_0 + b_1x + \cdots + x^k$. Then $m_1(T) = m_2(T) = 0$, but this implies $(m_1-m_2)(T) = 0$. Now $m_1 - m_2$ has strictly lower degree than both $m_1$ and $m_2$, which contradicts minimality. Hence, $m_T(x)$ is unique.
+
+The second part of this theorem amounts to showing that the roots of $m_T$ are precisely the eigenvalues of $T$.\footnote{This is the textbook's proof, not the one presented in lecture; this one is far more clear. See [8C] in the text.} Let $m_T(x) = a_0 + a_1x + \cdots + x^k$. If $r\in\C$ is a zero of $m_T$, then we have $m_T(x) = (x-r)g(x)$, where $g$ is monic. Since $m_T(T) = 0$, we see
+$$0 = (T- rI)(g(T)v)$$
+for any $v\in V$. But this is only legal if there exists at least a nonzero vector $v_0\in V$ with $g(T)v_0 \neq 0$, otherwise we have a contradiction with minimality. Hence $(T-rI)v_0 = 0$, so that $v_0$ is an $r$-eigenvector of $T$.
+
+Conversely, suppose $\lambda$ is an eigenvalue for $T$. Pick an $\lambda$-eigenvector $v\neq 0$; i.e., $Tv = \lambda v$. Hence
+$$0 = m_T(T)v = a_0v + a_1Tv + a_2T^2v + \cdots + T^kv$$
+$$\implies 0 = a_0 + a_1\lambda v + a_2\lambda^2 v + \cdots + \lambda^k v = m_T(\lambda)v.$$
+Hence $m_T(\lambda) = 0$.
+\end{proof}
+\setc{92}
+\section{Generalized Eigenspaces: Worked Examples}
+\begin{example}[8A.1]
+Define $T\in\lin(\C^2)$ by $(w,z) \mapsto (z,0)$. Find all generalized eigenvectors of $T$.
+\end{example}
+\begin{solution}
+Let $\lambda$ be an eigenvalue for $T$. Then if $(a,b)\neq \mathbf 0$ is an eigenvector, we have $T(a,b) = (b, 0) = (\lambda a, \lambda b)$. Clearly, $\lambda = 0$ is an eigenvalue. If $\lambda\neq 0$ is an eigenvalue, we must have $b=0$, but this implies $a=0$, which is impossible. Hence, the only eigenvalue of $T$ is $\lambda = 0$, and an eigenvector is $(1, 0)$. We also notice that $(0,1)$ (as well as literally any other vector in $\C^2$) is a generalized eigenvector, as $(T-0I)^2 = T^2 = 0$. Hence $G(0, T) = \boxed{\C^2}$. 
+\end{solution}
+
+\begin{example}[8A.5]
+Suppose $T\in\lin(V)$, $m$ is a positive integer, and $v\in V$ is such that $T^{m-1}v\neq 0$ but $T^mv= 0$. Prove that $\{v, Tv, \ldots, T^{m-1}v\}$ is linearly independent.
+\end{example}
+\begin{proof}
+Suppose there exist $a_i$, $0\leq i\leq m-1$, such that
+$$a_0v + a_1Tv + \cdots + a_{m-1}T^{m-1}v = 0.$$
+This implies that
+$$T^{m-1}(a_0v + \cdots + a_{m-1}T^{m-1}v) = 0 \implies T^{m-1}a_0v = 0 \implies a_0 = 0.$$
+Similarly, we see
+$$T^{m-2}(a_1Tv + \cdots + a_{m-1}T^{m-1}v) = T^{m-1}a_1v = 0 \implies a_1=0,$$
+and in this fashion, we eliminate all of the $a_i$. Hence the set is linearly independent.
+\end{proof}
+\begin{example}[8A.6]
+Suppose $T\in\lin(\C^3)$ is defined by $(z_1,z_2,z_3) \mapsto (z_2, z_3, 0)$. Prove that $T$ has no square root.
+\end{example}
+\begin{proof}
+We give a dimensional argument. Notice that $T$ has \textit{nilpotency degree} $3$; i.e., $T, T^2\neq 0$, but $T^3 = 0$. Hence $\ker T^3 = \C^3$, but we know that $0=\ker T^0 \leq\ker T^1\leq\ker T^2\leq \ker T^3 = \C^3$. Moreover, $\ker T^2, \ker T^3\neq \C^3$, so by counting, we must have
+$$0 = \dim\ker T^0 < \dim \ker T^1 < \dim \ker T^2 < \dim\ker T^3 = 3,$$
+where each inequality is strict. Now, assume for contradiction that $S$ is a square root of $T$. Then we know that $\dim\ker S^2 = 1$, $\dim\ker S^4 = 2$, and $\dim\ker S^6 = 3$, but this is a contradiction: 
+we have $1\leq \dim\ker S^3\leq 2$, but if $\dim\ker S^3 = 1$, this implies $\ker S^2 = \ker S^3 = \cdots = \ker S^6$, which is impossible, and similarly if $\dim \ker S^3 = 2$. Hence, $T$ cannot have a square root.
+\end{proof}
+\newpage
+\begin{example}[8B.1]
+Suppose $V$ is a finite-dimensional complex vector space, $N\in\lin(V)$, and $0$ is the only eigenvalue of $N$. Prove that $N$ is nilpotent.
+\end{example}
+\begin{proof}
+By the GED, $V = G(0, N)$, which means that $(N-0I)|_V = N$ is nilpotent.
+\end{proof}
+\begin{example}[8B.2]
+Give an example of an operator $T$ on a finite-dimensional real vector space such that $0$ is the only real eigenvalue of $T$, but $T$ is not nilpotent.
+\end{example}
+\begin{solution}
+Define $T$ on $\R^3$ by $(x,y,z)\mapsto (0, -z, y)$. If $\lambda\in\R$ is an eigenvalue, we must have $(0, -z, y) = (\lambda x,\lambda y, \lambda z)$, so clearly $\lambda = 0$ is an eigenvalue. If $\lambda\neq 0$, then we have $x=0$, and we have $-z = \lambda y$, $y = \lambda z$, which implies $-z = \lambda^2z \implies 0 = z\lambda^2+z = z(\lambda^2+1)$, so $\lambda = \pm i\not\in \R$. However, we show that $T$ is not nilpotent: notice that $T^k(0, 1,1) \neq\mathbf 0$ for any $k\in \Z$.
+\end{solution}
+\begin{example}[8B.4]
+Suppose $V$ is an $n$-dimensional complex vector space and $T$ is an operator on $V$ such that $\ker T^{n-2}\neq \ker T^{n-1}$. Prove that $T$ has at most $2$ distinct eigenvalues.
+\end{example}
+\begin{proof}
+We must have
+$$\{0\} = \ker T^0 < \ker T^1 < \cdots < \ker T^{n-2} < \ker T^{n-1},$$
+where each inclusion is strict. Hence $\dim \ker T^{n-1} \geq n-1$, but $\ker T^{n-1} \leq \ker T^n = G(0,T)$, so this leaves two cases to consider.
+
+If $\dim G(0,T) = n$, then this implies $G(0,T) = V$. Hence $0$ is the only eigenvalue of $V$ by the GED. Otherwise, if $\dim G(0, T) = n-1$, then $V = G(0, T)\oplus G(\lambda, T)$, where $\lambda\neq 0$ is the other eigenvalue of $T$.
+\end{proof}
+\section{Characteristic Polynomials, Jordan Form}
+As usual, assume that $V$ is a finite-dimensional vector space over $\C$, and let $T\in\lin(V)$. The GED tells us this fact, which we state separately for clarity.
+\begin{proposition}
+Let $T\in\lin(V)$, and let $\{\lambda_i\}_1^k$ be the distinct eigenvalues of $T$. Then $(T-\lambda_iI)|_{ G(\lambda_i, T)}$ is nilpotent for all $1\leq i\leq k$.
+\end{proposition}
+
+This proposition allows us to define the characteristic polynomial $q_T$, as well as state the Cayley-Hamilton Theorem. We also have this final lemma about the relationship between $m_T$ and $q_T$.
+\begin{lemma}
+If $b(x)\in \C[x]$ is such that $b(T) = 0$, then $m_T \mid b$. In particular, the minimal polynomial divides the characteristic polynomial of $T$.
+\end{lemma}
+\begin{proof}
+By the Division Algorithm, write $b(x) = m(x)g(x) + r(x)$, where $\deg r < \deg m$. Evaluating for $T\in\lin(V)$, we have $0=b(T) = m(T)a(T) + r(T) = 0 + r(T) = r(T)$, so $m \mid b$.
+\end{proof}
+\subsection*{[8D] Jordan Form}
+\begin{example}
+Let $N: \C^4\to \C^4$ be defined by $(z_1, z_2, z_3, z_4)\mapsto (0, z_1, z_2, z_3)$. Let $v = (1, 0, 0, 0)$. We check that $\set{v, Nv, N^2v, N^3v}$ is a basis of $\C^4$. Ordering this basis backwards, we see that $N$ has the matrix $\begin{pmatrix} 0& 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \end{pmatrix}$ with $1$'s on the superdiagonal and $0$'s on the main diagonal.
+\end{example}
+\newpage
+\definecolor{green}{HTML}{00A99A}
+\newcommand{\aq}{\textcolor{green}}
+\begin{example}
+Define $N: \C^6\to \C^6$ by $(z_1, \ldots, z_6) \mapsto (0, z_1, z_2, 0, z_4, 0)$. Let $v_1 = (1, 0,0,0,0,0)$, $v_2 = (0,0,0,1,0,0)$ and $v_3 = (0,0, 0, 0, 0, 1)$. Then $N^3v_1 = N^2v_2 = Nv_3 = 0$, and we can check that
+$$\set{\textcolor{red}{N^2v_1, Nv_1, v_1}, \textcolor{cyan}{Nv_2, v_2}, \aq{v_3}}$$
+is a basis. Now, the matrix of $N$ under this basis is
+$$\begin{pmatrix}
+\red 0 & \red 1 & \red 0 & 0 & 0 & 0 \\
+\red 0 & \red 0 & \red 1 & 0 & 0 & 0 \\
+\red 0 & \red 0 & \red 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & \bl 0 & \bl 1 & 0 \\
+0 & 0 & 0 & \bl 0 & \bl 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & \aq 0 \\
+\end{pmatrix},$$
+which matches with our \red{red}, \bl{blue}, and \aq{green} groupings of our basis, but in blocks instead.
+\end{example}
+This is one case of a general phenomenon.
+\begin{theorem}
+Suppose $N\in\lin(V)$ is nilpotent. Then there exist vectors $v_1, \ldots, v_s$ and integers $m_1, \ldots, m_s \geq 0$ such that $N^{m_i+1}v_i = 0$, and for each $v_i$ and $m_i$ pair, we have $N^jv_i \neq 0$ for $j \leq m_i$, \textbf{and}
+$$\beta := \set{\red{N^{m_1}v_1, \ldots, v_1}, \bl{N^{m_2}v_2, \ldots, v_2}, \ldots, \aq{N^{m_s}v_s, \ldots, v_s}}$$
+is a basis for $V$. Additionally, this implies that $N$ has the matrix $\diag(\red{A_1}, \bl{A_2}, \ldots, \aq{A_s})$ with respect to $\beta$, and each $A_i$ is an $(m_i + 1)\times (m_i+1)$ matrix with $0$ on the diagonal and $1$ on the superdiagonal, and $0$ everywhere else.
+\end{theorem}
+\begin{proof}
+We prove by induction on the dimension of $V$. When $V$ is one-dimensional, the only nilpotent operator is $0$, so in this case, just take $v_1 = (1)$. Now, suppose the theorem holds for all vector spaces with dimension at most $n-1$, and let $n := \dim V$. Now, let $U := \im N \leq V$. We have $\dim U < \dim V$ by nilpotence, and $U$ is $N$-invariant. Hence, we apply the inductive assumption on $N|_U$, so there exists a basis
+$$\gamma := \{\red{N^{m_1}v_1, \ldots, v_1}, \ldots, \aq{N^{m_s}v_s, \ldots, v_s}\}$$
+of $U$. Each $v_i$ lies in the range $U := \im N$, so $v_i = Nu_i$ for some $u_i\in V$. Hence basis $\gamma$ can be rewritten as
+$$\gamma= \{\red{N^{m_1+1}u_1, \ldots, Nu_1}, \ldots, \aq{N^{m_s+1}u_s, \ldots, Nu_s}\}$$
+Add the vectors $\set{u_i}_1^s$ to this basis: we claim that the set $\beta' = \set{u_i}_1^s\cup \gamma$ is linearly independent. Indeed, if there were a linear combination $(\Sigma)$ of $\beta'$ summing to $0$, then applying $N$ to $(\Sigma)$ shifts the combination over, so all of the coefficients drop off by linear independence of the smaller set except possibly the ones in front of the $N^{m_j + 1}u_j$. But these are independent anyway, so no problem actually exists. Now, extend $\beta'$ to a basis $\beta$ of $V$ by adding $\set{w_i}_1^p$, where $w_i$ are just arbitrary vectors added to compensate for the difference. Now $Nw_i \in U \iff Nw_i \in \Span \gamma$, so there exist $x_i$ in $V = \Span\beta$ such that $Nw_i = Nx_i \iff N(w_i - x_i) = 0$. Setting $u_{n+k} = w_k - x_k$, we replace the $w_k$'s with $u_{n+k}$'s and we can check that this still forms a basis, completing the proof.
+\end{proof}
+\newpage
+\setc{96}
+\section{Characteristic Polynomials: Worked Examples}
+\begin{example}[8C.2]
+Suppose $V$ is a complex vector space. Suppose $T\in\lin(V)$ is such that $5$ and $6$ are eigenvalues of $T$, and $T$ has no other eigenvalues. Prove that if $\dim V =: n$, we have that $(T-5I)^{n-1}(T-6I)^{n-1}=0$.
+\end{example}
+\begin{proof}
+The characteristic polynomial $q(z)$ of $T$ has the form $q(z) = (x-5)^i(x-5)^j$, where $i,j\leq n-1$ by counting. Clearly, $q$ divides $(x-5)^{n-1}(x-6)^{n-1}$, so Cayley-Hamilton finishes the proof.
+\end{proof}
+\begin{example}[8C.3]
+Give an example of an operator $T\in\lin(\C^4)$ whose characteristic polynomial equals $(z-7)^2(z-8)^2$.
+\end{example}
+\begin{solution}
+Take $T = \diag(7, 7, 8, 8)$.
+\end{solution}
+\begin{example}
+Suppose $T\in\lin(V)$ is invertible. Prove that there exists a polynomial $p\in\F[x]$ such that $T^{-1} = p(T)$.
+\end{example}
+\begin{proof}
+Let $q(z) = a_0 + a_1z + \cdots + z^n$ be the minimal polynomial of $T$. Then $q(T) = 0$, and in particular, we know $a_0 \neq 0$. Hence
+$$0 = a_0I + a_1T + \cdots + a_{n-1}T^{n-1} + T^n\implies -a_0I = a_1T + \cdots + a_{n-1}T^{n-1} + T^n$$
+$$\implies I =  -\frac 1{a_0}(a_1T + \cdots + a_{n-1}T^{n-1} + T^n)\implies T^{-1} = -\frac 1{a_0}(a_1 + \cdots + a_{n-1}T^{n-2} + T^{n-1}),$$
+so we are done.
+\end{proof}
+\section{Jordan Form, Complexification}
+\subsection*{[8D] Jordan Form}
+As usual, let $V$ denote a finite-dimensional vector space over $\C$. From Theorem 94.5, we deduce the following.
+\begin{theorem}[Jordan Canonical Form]
+Let $T\in\lin(V)$ and let $\lambda_1, \ldots, \lambda_k$ be the distinct eigenvalues of $T$. Then there exists a basis of $V$ in which $T$ has the matrix $M_T =\diag(A_1, \ldots, A_n)$, where each $A_j$ has $\lambda_j$'s on the diagonal, $1$'s on the superdiagonal, and $0$'s everywhere else.
+\end{theorem}
+\begin{proof}
+By the GED, write $V = G(\lambda_1, T) \oplus \cdots \oplus G(\lambda_k, T)$. Then in appropriate bases of each $V_i := G(\lambda_i, T)$ under Theorem 94.5, we have that $(T - \lambda_iI)|_{V_i}$ has the matrix $\diag(B_{i1}, \ldots, B_{ij})$ where each $B_{i\ell}$ has $0$ on the diagonal and $1$ above. Now, $T = T - \lambda_i I + \lambda_i I$, and put all of these bases together.
+\end{proof}
+\begin{definition}
+The basis chosen in Theorem 98.1 is called a \textit{Jordan basis} for $T$, and the matrix in Theorem 98.1 is the \textit{Jordan (canonical) form} of $T$.
+\end{definition}
+\begin{example}
+Recall the matrix $T = \matnine 634 062 007$, with $G(6,T) = \Span\{(1,0,0), (0,1,0)\}$ and $G(7, T) = \Span\{(10, 2, 1)\}$. There are two possible options for the Jordan form of $T$:
+$$\matnine {\red 6}00 0{\bl 6}0 00{\aq 7} \textsf{ or } \matnine{\red 6}{\red 1}0 {\red 0}{\red 6} 0 00{\aq 7}.$$
+\newpage
+The first of these choices implies that $\dim E(6, T) = 2$, but we check that $\dim E(6, T) = 1$:
+$$E(6, T) = \ker (T-6I) = \ker \matnine 034 002 001 = \Span\{(1,0,0)\}.$$
+Hence, the second option is the correct Jordan form for $T$.
+\end{example}
+
+We comment that the number of Jordan blocks with the same eigenvalue is precisely $\dim E(\lambda, T)$.
+
+\begin{example}
+Let $T$ have a matrix with $\lambda$ along its diagonal, and $1$ above. This means that $T$ is already in Jordan form, which only has $1$ block that is the entire matrix.
+\end{example}
+
+\subsection*{[9A] Complexification}
+Over real vector spaces, we cannot use the Jordan form; however, we can extend our real vector space to take advantage of it.
+\begin{definition}
+Let $V$ be an $\R$-vector space. The \textit{complexification of $V$}, denoted $V_\C$, is the space $V_\C := V \times iV$, where addition is done component wise and the scalar field is $\C$. Scalar multiplication is defined as follows for any $z = a+bi\in \C$ and $u+vi\in V_\C$:
+$$(a+bi)(u+vi) = (au-bv) + i(bu + av).$$
+Similarly, the complexification of an operator $T\in\lin(V)$ is the operator $T_\C: V_\C \to V_\C$ by $T_\C(u+vi) = Tu + iTv$.
+\end{definition}
+
+It is readily checked that $V_\C$ is a $\C$-vector space, and $T_\C$ is actually $\C$-linear. Similarly, if $\{e_j\}$ is an $\R$-basis for $V$, $\{e_j + 0i\} = \{e_j\}$ is also a $\C$-basis for $V_\C$. Of course, the matrix of $T$ matches that of $T_\C$ by the obvious embedding $V\inj V_\C$.
+\begin{proposition}
+Let $V$ be an $\R$-vector space, and let $v\in V_\C$ be a (generalized) $\lambda$-eigenvector of some $T_\C\in\lin(V_\C)$. Then $\bar v$ is a (generalized) $\bar\lambda$-eigenvector of $T_\C$.
+\end{proposition}
+\setc{102}
+\section{Minimal Polynomials and Nilpotency}
+In this section, we view one proposition, which is occasionally useful.
+\begin{proposition}
+Let $V$ be a finite-dimensional complex vector space, and let $N\in\lin(V)$ be nilpotent. Then the minimal polynomial of $N$ is $x^{m+1}$, where $m$ is the largest consecutive string of $1$'s on the superdiagonal of the Jordan form of $N$.
+\end{proposition}
+\begin{proof}
+Write $M_N = \diag(A_1, \ldots, A_k)$ in Jordan form, so each $A_i$ has $0$'s on the diagonal\footnote{The only eigenvalue of a nilpotent operator is $0$.}, $1$'s on the superdiagonal, and $0$'s everywhere else. The start of a block coincides with an interruption of the string of $1$'s, so the number $m$ (the longest consecutive string of $1$'s) is simply the number of $1$'s in the largest block. That is, $m$ is one less than the maximum of the sizes of each $A_i$. Take $n$ to be this maximum, so it is easy to see that $N, \ldots, N^{n-1}\neq 0$, but $N^n = 0$. Hence $m_T(x) = x^n = x^{m+1}$ as desired.
+\end{proof}
+\newpage
+\setc{106}
+\section{Nilpotency: Worked Examples}
+\begin{example}
+Let $T\in\lin(V)$. Prove that $T$ is invertible if and only if its minimal polynomial has nonzero constant term.
+\end{example}
+\begin{proof}
+We have these equivalences: $T$ is not invertible $\iff$ $0$ is an eigenvalue for $T$ $\iff$ $x\mid m_T$ $\iff$ $m_T$ has $0$ as a constant term. Now take the contrapositive.
+\end{proof}
+\begin{example}
+Let $N\in\lin(V)$, $\dim V = n$, and $\ker N^{n-1} \neq \ker N^n$. Prove that $N$ is nilpotent and for all $0\leq m \leq n$, we have $\dim \ker N^m = m$.
+\end{example}
+\begin{proof}
+We know $\ker N^0 \leq \ker N^1 \leq \cdots \leq \ker N^{n-1} \leq \ker N^n$. If $\ker N^j = \ker N^{j+1}$ for $j < n$, we get a contradiction as
+$$\ker N^j = \ker N^{j+1} = \cdots = \ker N^{n-1} = \ker N^n.$$
+Hence, each inclusion is strict:
+$$\ker N^0 < \ker N^1< \cdots < \ker N^{n-1} < \ker N^n.$$
+This implies $\dim\ker N^n \geq n$, but $\dim V = n$ so $\dim \ker N^n = n \iff \ker N^n = V \iff N^n = 0$, so $N$ is nilpotent. By counting, we also have $\dim \ker N^m = m$ as desired.
+\end{proof}
+\begin{example}
+Give an operator $T\in\lin(\C^7)$ such that $T^2 + T + I$ is nilpotent.
+\end{example}
+\begin{solution}
+Take $\zeta_3 := \exp(2\pi i/3)$. Then the map $T: \C^7 \to \C^7$ by $v \mapsto \zeta_3v$ satisfies $T^2 + T + I = 0,$ which is indeed nilpotent.
+\end{solution}
+\begin{example}
+In contrast to Ex. 107.3, show that there cannot exist a $T\in\lin(\R^7)$ such that $T^2+T+I$ is nilpotent.
+\end{example}
+\begin{proof}
+Assume for contradiction that such a $T$ exists. Define $S := T^2+T+I$, and say that $S$ has nilpotency degree $n$, so the minimal polynomial of $S$ is $m_S(x) = x^n$. Hence $(T^2+T+I)^n = 0$, but this implies the eigenvalues of $T$ are roots of $x^2+x+1$; i.e., $\zeta_3$ and $\zeta_3^2$. But also, we see that
+$$m_T(x) \mid (x^2+x+1)^n \implies m_T \mid x^2 + x + 1$$
+(by irreducibility)\footnote{Prime ideals are radical, and the set of all polynomials that vanish for $T$ is the ideal generated by $m_T$.}, so we have $m_T \in (\C\setminus \R)[x]$, a contradiction.
+\end{proof}
+\section{Adjoints and Canonical Forms}
+Finally, we end these notes with a connection between the two main topics of this course: inner product spaces and generalized eigenspaces.
+\begin{theorem}
+Let $V$ be a finite-dimensional inner product space over $\R$ or $\C$. If $T\in\lin(V)$ is self-adjoint, then $E(\lambda, T) = G(\lambda, T)$ for every eigenvalue $\lambda$ of $T$.
+\end{theorem}
+\begin{proof}
+Apply the Spectral Theorem on $T$ and diagonalize $T$ --- all Jordan blocks have size $1$.
+\end{proof}
+\newpage
+\part*{Homework Exercises}
+What follows are my attempted solutions to every homework exercise that has been assigned this quarter. With the exception of HW \#8, these homework assignments received full points, \textbf{but I cannot guarentee the correctness of the work here,} as most of the grade is completion-based. I have revised a few of these in these notes for clarity.
+\section*{Homework 1}
+\subsection*{[5A] Invariant Subspaces}
+\subsubsection*{5A.12 Eigenvalues and Eigenvectors of a Polynomial Map}
+\textit{Define $T: \mathcal P_4(\R) \to \mathcal P_4(\R)$ by $(Tp)(x) = xp'(x)$. Find all eigenvalues and eigenvectors of $T$.}
+\begin{solution}
+Let $p\in \mathcal P_4(\R)$. Then $p(x) = a_4x^4 + a_3x^3 + a_2x^2 + a_1x + a_0$, so that
+$$p'(x) = 4a_4x^3 + 3a_3x^2 + 2a_2x + a_1, \textrm{ and}$$
+$$(Tp)(x) = xp'(x) = 4a_4x^4 + 3a_3x^3 + 2a_2x^2 + a_1x$$
+Let us suppose $p\neq 0$ is an eigenvector of $T$. Then $Tp = \lambda p$, i.e., we must have $xp'(x) = \lambda p(x)$, or
+$$4a_4x^4 + 3a_3x^3 + 2a_2x^2 + a_1x = \lambda(a_4x^4 + a_3x^3 + a_2x^2 + a_1x + a_0)$$
+$$\implies 4a_4x^4 + 3a_3x^3 + 2a_2x^2 + a_1x = \lambda a_4x^4 + \lambda a_3x^3 + \lambda a_2x^2 + \lambda a_1 x + \lambda a_0.$$
+If $a_4 \neq 0$, then comparing coefficients tells us that $\lambda_1 = 4$ is an eigenvalue as long as $a_0 = a_1 = a_2 = a_3 = 0$. Similarly, if $a_4 = 0$ but $a_3\neq 0$, then another eigenvalue is $\lambda_2 = 3$ by setting $a_0 = a_1 = a_2 = 0$. Continuing in this fashion, we have the following eigenvalues with their corresponding eigenvectors:
+\begin{center}
+\begin{tabular}{|c|c|}\hline
+    Eigenvalue & Eigenvectors  \\ \hline
+    4 & $p(x) = ax^4$, $a\in \R$ \\
+    3 & $p(x) = ax^3$, $a\in \R$ \\
+    2 & $p(x) = ax^2$, $a\in \R$ \\
+    1 & $p(x) = ax$, $a\in \R$ \\
+    0 & $p(x) = a$, $a\in \R$ \\ \hline
+\end{tabular}
+\end{center}
+\end{solution}
+\subsubsection*{5A.14 Eigenvalues and Eigenvectors of a Projection}
+\textit{Suppose $V = U\oplus W$, where $U,W\leq V$ are nontrivial. Define $P: V\to V$ by $P(u + w) = u$ for $u\in U$ and $w\in W$. Find all eigenvalues and eigenvectors of $P$.}
+\begin{solution}
+Since $V = U\oplus W$, every $v\in V$ can be written uniquely in the form $v = u+w$, for $u\in U$ and $w\in W$. Now, suppose $0\neq v = u+w\in V$ is an eigenvector for $P$, with eigenvalue $\lambda$. Then $P(u+w) = u = \lambda(u+w) = \lambda u+\lambda w$, so that $0 = (\lambda - 1)u + \lambda w \implies (1-\lambda)u = \lambda w$. Now, $U\cap V = \{0\}$, so $0 = (1-\lambda)u = \lambda w$. If $u$ and $w$ are both zero, then $v = u+w = 0+0 = 0$, which contradicts our assumption, so we consider two cases.
+
+\textit{Case I}: $u\neq 0$. In this case, we have $0 = (1-\lambda)u$, so $\boxed{\lambda = 1}$ is an eigenvalue. But $0 = \lambda w = 1w$, so $w=0$, hence the eigenvectors corresponding to $\lambda = 1$ are exactly the nonzero $u\in U$.
+
+\textit{Case II}: $w\neq 0$. In this case, we have $0 = \lambda w \implies \boxed{\lambda = 0}$ is an eigenvalue. But $0 = (1-\lambda)u = 1u \implies u=0$, so the eigenvectors corresponding to $\lambda = 0$ are exactly the nonzero $w\in W$.
+\end{solution}
+\subsubsection*{5A.15a Similar Transformations Have Same Eigenvalues}
+\textit{Suppose $T\in \mathcal L(V)$. Suppose $S\in \mathcal L(V)$ is invertible. Show that $T$ and $S^{-1}TS$ have the same eigenvalues.}
+\begin{proof}
+Let $\lambda$ be an eigenvalue of $T$. Then there exists some $v\in V$ with $Tv = \lambda v$. Notice that $S^{-1}T(v) = S^{-1}(\lambda v) = \lambda S^{-1}(v)$, but we can write $v = SS^{-1}v$ to obtain (using linearity of $T$ and $S$, and thus linearity of $S^{-1}$):
+$$\lambda S^{-1}v = S^{-1}Tv = S^{-1}T(SS^{-1}v) = S^{-1}TS(S^{-1}v).$$
+Hence $\lambda$ is an eigenvalue of $T$, with eigenvector $S^{-1}v$.
+
+Conversely, let $\mu$ be an eigenvalue of $S^{-1}TS$. Then there exists some $u\in V$ with $S^{-1}TSu = \mu u$. A left-application of $S$ yields $TSu = S(\mu u) = \mu Su$, so $\mu$ is an eigenvalue of $T$ with eigenvector $Su$. Thus, $T$ and $S^{-1}TS$ have the same eigenvalues.
+\end{proof}
+\subsubsection*{5A.16 Conjugate of an Eigenvalue}
+\textit{Suppose $V$ is a complex vector space, $T\in \mathcal L(V)$, and the matrix of $T$ with respect to some basis of $V$ contains only real entries. Show that if $\lambda$ is an eigenvalue of $T$, then so is $\bar\lambda$.}
+\begin{proof}
+Let $E\subset V$ be a basis for $V$, and let $0\neq v\in V$ be an $\lambda$-eigenvector of $T\in\lin(V)$. Since $E$ is a basis, we can write $v = \displaystyle \sum_{e\in E} a_ee$, for appropriate scalars $a_e$. Since $T$ is determined by its values on the basis $E$, for each $u\in E$ write $Tu = \displaystyle\sum_{e\in E} A_{u, e}e$. Hence with some work we see
+$$\lambda \sum_{e\in E}a_ee = \lambda v=Tv = T\left(\sum_{e\in E} a_ee\right) = \sum_{e\in E} a_e Te = \sum_{u\in E}a_uTu = \sum_{u\in E}\sum _{e\in E} a_uA_{u,e}e.$$
+
+Now, taking a complex conjugate yields (noting $\overline{ \lambda v} = \overline{Tv} = \bar T\bar v$):
+$$\overline{\lambda v} = \overline{\lambda\sum_{e\in E} a_ee} = \overline T\left( \overline{\sum_{e\in E}a_ee}\right) = \sum_{e\in E}\overline{a_e} \overline Te.$$
+
+But since the matrix of $T$ has only real entries, we have $\overline T = T$, so the above can be rewritten as
+$$\overline{\lambda v} = \sum_{e\in E}\overline a_e\overline Te = \sum_{u\in E}\overline{a_u}Tu = \sum_{u\in E}\sum _{e\in E} \overline {a_u}A_{u,e}e = T\overline v,$$
+by comparing our first computation. Hence $\bar\lambda \bar v = T\bar v$, so $\bar v$ is an $\bar\lambda$-eigenvector of $T$.
+\end{proof}
+\newpage
+
+\subsubsection*{5A.19 Eigenvalues and Eigenvectors of a Matrix of all $1$'s}
+\textit{Suppose $n$ is a positive integer and $T\in \mathcal L(\mathbb F^n)$ is defined by}
+$$T(x_1, \ldots, x_n) = \left(\sum_{i=1}^n x_i, \ldots, \sum_{i=1}^n x_i\right),$$
+\textit{in other words, $T$ is the operator whose matrix with respect to the standard basis consists of all $1$'s. Find all eigenvalues and eigenvectors of $T$.}
+\begin{solution}
+Let $x = (x_1, \ldots, x_n)\neq (0, 0, \ldots, 0)$ be an eigenvector of $T$ with eigenvalue $\lambda$. Then $Tx = \lambda x$ for some $\lambda \in\mathbb F$, or we have that
+$$\sum_{i=1}^n x_i = \lambda x_j$$
+for every $1 \leq j \leq n$.
+Hence $\lambda x_1 = \lambda x_2 = \ldots = \lambda x_n = \sum x_i$. Let us consider two cases, where $\lambda = 0$ and $\lambda \neq 0$.
+
+\textit{Case I:} $\lambda \neq 0$. In this case, we multiply by $\lambda^{-1}$ to obtain $x_1 = x_2 = \ldots = x_n$; i.e., the eigenvectors corresponding to a nonzero $\lambda$ is exactly the subspace $\boxed{\langle (1, 1, \ldots, 1) \rangle}$. Now $T(1, 1, \ldots, 1) = n\cdot 1 = n$, so $\boxed{\lambda = n}$.
+
+\textit{Case II:} $\lambda = 0$. In this case, we have $\lambda x_j = 0 = \sum x_i$ for any $1 \leq j \leq n$, so the eigenvectors in this case are exactly the vectors $(x_1, \ldots, x_n) \in \mathbb F^n$ such that $x_n = -(x_1 + \ldots + x_{n-1})$. In particular, these vectors are allowed to be nonzero, so $\boxed{\lambda = 0}$ is indeed an eigenvalue.
+\end{solution}
+
+\subsubsection*{5A.26 When All Non-trivial Vectors are Eigenvectors}
+\textit{Suppose $T\in \mathcal L(V)$ is such that every nonzero vector $v\in V$ is an eigenvector of $T$. Prove that $T$ is a scalar multiple of the identity operator.}
+\begin{proof}
+Since every nonzero vector $v\in V$ is an eigenvector, it suffices to show that $T$ has exactly one eigenvalue. Let $\lambda, \mu$ be eigenvalues of $T$ with eigenvectors $v, w \in V$ respectively. Then $Tv = \lambda v$ and $Tw = \mu w$. We consider two cases to show that $\lambda = \mu$.
+
+\textit{Case I:} $v$ and $w$ are linearly dependent. Then $w = cv$ for some scalar $c$, so that $Tw = T(cv) = cTv = c\lambda v = \lambda(cv) = \lambda w$. Hence $\lambda w = \mu w \iff (\lambda - \mu)w = 0$, and since $w\neq 0$ (as it is an eigenvector), we have $\lambda = \mu$.
+
+\textit{Case II:} $v$ and $w$ are linearly independent. Here, notice that $T(u+v) = Tu + Tv = \lambda u + \mu v$, but by linear independence, notice $u + v\neq 0$, so $u+v$ is an eigenvector. Hence, there exists some $\xi$ such that  $T(u+v) = \xi (u+v) = \xi u + \xi v$, so that $$\lambda u + \mu v = \xi u+\xi v \implies (\xi - \lambda)u + (\xi - \mu)v = 0.$$
+Since $v$ and $w$ are linearly independent, we must have $\xi - \lambda  = 0$ and $\xi - \mu = 0$, hence $\xi = \lambda = \mu$.
+
+It thus follows that $Tv = \lambda v$ for all $v \in V$, so that $T = \lambda I$, where $I$ is the identity operator.
+\end{proof}
+\newpage
+\section*{Homework 2}
+\subsection*{[5B] Eigenvalues and Upper-Triangular Matrices}
+\subsubsection*{5B.2 Product of ``Eigentransformations"}
+\textit{Suppose that $T \in \lin(V)$ and $(T-2I)(T-3I)(T-4I) = 0$. Suppose $\lambda$ is an eigenvalue of $T$. Prove that $\lambda = 2$ or $\lambda = 3$ or $\lambda = 4$.}
+\begin{proof}
+Let $\lambda$ be an eigenvalue of $T$, and let $v\neq 0$ be an eigenvector with eigenvalue $\lambda$. Then $Tv = \lambda v$, so that $(T-4I)(v) = Tv - 4I(v) = \lambda v - 4v = (\lambda  -4)v$. Similarly, we see that
+$$(T-3I)(T-4I)v = (T-3I)(\lambda -4)v = (\lambda - 4)(T-3I)v = (\lambda - 4)(\lambda - 3)v,$$
+so continuing this inductively we see that
+$$(T-2I)(T-3I)(T-4I)v = (\lambda - 4)(\lambda - 3)(\lambda - 2)v.$$
+But $(T-2I)(T-3I)(T-4I)v =0$, and since $v$ is nonzero, we must have $\lambda_{1,2,3} = 2,3,4$, which completes the proof.
+\end{proof}
+
+\subsubsection*{5B.4 Kernel and Image of Idempotent Transformation}
+\textit{Suppose $P\in\lin(V)$ and $P^2 = P$. Prove that $V = \ker P\oplus \im P$.}
+\begin{proof}
+It suffices to show that $V \subseteq \ker P+\im P$, and that $\ker P\cap\, \im P = \{0\}$. Take $v\in V$. If $v\in \im P$, then clearly $v = 0 + v \in \ker P +\im P$. If $v\not\in\im P$, we still have $Pv \in \im P$, so that $v = (v - Pv) + Pv$. We claim that $v-Pv\in\ker P$; to see this, note that
+$$P(v-Pv) = Pv - PPv = Pv - P^2v = Pv - Pv = 0.$$
+Hence $v = (v-Pv)+Pv \in \ker P + \im P$.
+
+Now, take $u\in \ker P\cap \im P$. Then $Pu = 0$, and there exists some $w\in V$ such that $Pw = v$. But now $P^2w = Pv = 0$, but $P^2 = P$, so $v = Pw = P^2w = 0$, hence $\ker P\cap \im P = \{0\}$. This shows that $V = \ker P\oplus\im P$.
+\end{proof}
+
+\subsubsection*{5B.7 Square Root of an Eigenvalue}
+\textit{Suppose $T\in\lin(V)$. Prove that $9$ is an eigenvalue of $T^2$ if and only if $3$ or $-3$ is an eigenvalue of $T$.}
+\begin{proof}
+$(\impliedby)$: Without loss of generality, suppose $3$ is an eigenvalue of $T$. Then there exists $v\neq 0$ such that $Tv = 3v$. Now $T^2v = TTv = T(3v) = 3Tv = 3\cdot 3v = 9v$, so we immediately see that $v$ is an eigenvector for $T^2$, with eigenvalue $9$. The case where $-3$ is an eigenvalue is similar.
+
+$(\implies)$: Suppose that $9$ is an eigenvalue of $T^2$. Then there exists $v\neq 0$ such that $T^2v = 9v \iff (T^2 - 9I)v = 0$. Noting that $(T-3I)(T+3I) = T^2-9I$, we observe that $(T-3I)(T+3I)v = 0$. From here, we note that it is not possible that both $(T-3I)$ and $(T+3I)$ are injective, otherwise the composition $(T-3I)(T+3I) = (T^2-9I)$ is injective, implying that $v= 0$, which contradicts our assumption. Thus, this implies that there exists $u\neq 0$ such that either $(T-3I)u = 0\iff Tu = 3u$ or $(T+3I)u = 0\iff Tu = -3u$; i.e., at least one of $3$ and $-3$ is an eigenvalue of $T$.
+\end{proof}
+\newpage
+\subsection*{[5C] Eigenvalues and Diagonal Matrices}
+\subsubsection*{5C.3 Conditions for a Direct Sum of Kernel and Image}
+\textit{Suppose that $V$ is finite-dimensional and $T\in \lin(V)$. Prove that the following are equivalent:}
+\begin{itemize}
+    \item[(a)] $V = \ker T \oplus \im T$;
+    \item[(b)] $V = \ker T + \im T$;
+    \item[(c)] $\ker T \cap \im T = \{0\}$.
+\end{itemize}
+
+We first state a theorem from Math 121A that makes this easier, which was proved by tediously choosing a basis for $W_1\cap W_2$, extending them to bases of $W_1$ and $W_2$, and doing a linear independence argument:
+
+
+
+\begin{theorem*}
+If $W_1, W_2 \leq V$ are subspaces and $\dim V < \infty$, then
+$$\dim(W_1 + W_2) = \dim W_1 + \dim W_2 - \dim(W_1 \cap W_2).$$
+\end{theorem*}
+
+Now, we prove the result.
+
+\begin{proof}
+Clearly, $(a)\implies (b)$ and $(a)\implies (c)$ hold, so it suffices to show that $(b)\implies (c)$ and $(c)\implies (a)$ hold.
+
+$(b)\implies (c)$: Let $n := \dim V$, and suppose $\dim\ker T = k$ for some $k\leq n$. By the First Isomorphism Theorem, we know $\im T \cong V/\ker T$, so that $\dim\im T = \dim(V /\ker T) = n-k$. But by Theorem 1, we must have $\dim(\ker T \cap \im T) = 0$, which means that $\ker T\cap \im T = \{0\}$.
+
+$(c)\implies (a)$: Suppose that $\ker T\cap \im T = \{0\}$. It suffices to show that $V = \ker T+\im T$. But this is really a restatement of the above, as if we set $\dim\ker T = k$ (and thus $\dim\im T = n-k$ by the Isomorphism Theorem), we must have by Theorem 1
+$$\dim(\ker T + \im T) = \dim\ker T + \dim\im T - \dim(\ker T\cap \im T)$$
+$$=k + (n-k) + \dim\{0\} = k + n-k + 0 = n.$$
+But $\ker T+\im T \leq V$, so we must have $V = \ker T + \im T$. That $V = \ker T\oplus \im T$ follows from the fact that the kernel and image have trivial intersection, which we assumed.
+\end{proof}
+\subsubsection*{5C.5 Diagonalizable Iff Eigentransformations Split into Direct Sum}
+\textit{Suppose $V$ is a finite-dimensional complex vector space and $T\in\lin(V)$. Prove that $T$ is diagonalizable if and only if} $V = \ker(T-\lambda I)\oplus \im(T-\lambda I)$ for every $\lambda\in\C$.
+\begin{proof}
+$(\implies)$: Suppose $\dim V =: n < \infty$, and let $T$ be diagonalizable. Then $T$ has a diagonal matrix representation $M_T = \diag(\lambda_1, \ldots, \lambda_n)$ in some basis. Then $T - \lambda I$ is also diagonalizable, as its matrix representation is $M_T - \lambda I = \diag(\lambda_1 - \lambda, \ldots, \lambda_n -\lambda)$. Denote $S := T-\lambda I$. Then $V = E(\mu_1, S) \oplus E(\mu_2, S) \oplus \cdots \oplus E(\mu_m, S)$, where the $\mu_i$ are eigenvalues of $S$.
+
+If $\mu_i = 0$, then if $v\in E(\mu_i, S)$, then $Sv = \mu_iv = 0v = 0$, so $v\in \ker S$. Thus, $E(0, S) \leq \ker S$. Else, if $\mu_i\neq 0$, then if $v\in E(\mu_i, S)$, we notice that $S(\mu_i^{-1}v) = \mu_i\mu_i^{-1}v = v$, so $v\in \im(S)$, so $E(\mu_i, S) \leq \im(S)$ if $\mu_i\neq 0$. Now, if $0$ is an eigenvalue of $S$, without loss of generality set $\mu_1 = 0$, so that if $v\in V$, we have $v = v_1 + (v_2 + \cdots + v_n)$ for appropriate $v_i$, so that $v\in \ker S + \im S$, so that $V \leq \ker S + \im S \implies V = \ker S + \im S$. By Exercise 3, we have that $V = \ker S \oplus \im S = \ker(T-\lambda I) \oplus \im(T - \lambda I)$, as desired.
+
+$(\impliedby)$: We prove by induction on $\dim V =: n$. If $n = 1$, every operator is diagonalizable, so this is obvious. 
+
+Now, suppose that the statement holds for all complex vector spaces with dimension less than $n$, for $n\geq 2$. Let $V$ be a complex vector space $\dim V = n$, and let $T \in \lin(V)$. Now, $T$ has an eigenvalue $\lambda_1$ (as we are working over $\C$), so by assumption we know that $V = \ker(T -\lambda_1 I) \oplus \im(T - \lambda_1I),$ but $\ker(T-\lambda_1I) = E(\lambda_1, T)$, so $V = E(\lambda_1, T) \oplus \im(T - \lambda_1I)$.
+
+If we let $U = \im(T - \lambda_1 I) \leq V$, notice that $U$ is $T$-invariant, so it suffices to show that the restriction $S:= T|_U$ is diagonalizable. But $\dim U \leq \dim V$, so we can just show $U = \ker(S - \lambda I) \oplus \im(S - \lambda I)$ for each $\lambda\in \C$. But by Exercise 3, it is enough to show $\ker(S - \lambda I) \cap \im(S - \lambda I) = \{0\}$, but we know that $S$ is just a restriction of $T$. Hence $\ker(S - \lambda I)\leq \ker(T -\lambda I)$ and $\im(S - \lambda I) \leq \im(T-\lambda I)$, and we already have $\ker(T - \lambda I) \cap \im(T - \lambda I) = \{0\}$ by assumption. Hence $\ker(S - \lambda I)\cap \im(S - \lambda I) = \{0\}$, so $T|_U$ is diagonalizable and $\im(T-\lambda_1I)$ is a direct sum of eigenspaces, which implies $V$ is as well; i.e., $T$ is diagonalizable.
+\end{proof}
+\subsubsection*{5C.16 The Fibonacci Sequence}
+\textit{The Fibonacci sequence $(F_n)$ is defined by}
+$$F_1 = F_2 = 1 \textrm{ and } F_n = F_{n-2} + F_{n-1} \text{ for } n\geq 3.$$
+\textit{Define $T\in\lin(\R^2)$ by $T(x,y) = (y, x+y)$.}
+\begin{itemize}
+    \item[(a)] \textit{Show that $T^n(0, 1) = (F_n, F_{n+1})$ for each positive integer $n$.}
+\end{itemize}
+\begin{proof}
+We prove by induction on $n$. For $n=1$, we have $T^1(0, 1) = T(0, 1) = (1, 0+1) = (1,1) = (F_1, F_2)$. Now, suppose $T^k(0, 1) = (F_k, F_{k+1})$ for all $k< n$, for some $n\geq 2$. Now by the inductive hypothesis,
+$$T^n(0, 1) = T(T^{n-1}(0,1)) = T(F_{n-1}, F_n) = (F_n, F_{n-1} + F_n).$$
+Now we see that $F_{n+1} = F_n + F_{n-1}$, so $T^n(0, 1) = (F_n, F_{n+1})$, thus completing the proof by induction.
+\end{proof}
+\begin{itemize}
+    \item[(b)] \textit{Find the eigenvalues of $T$.}
+\end{itemize}
+\begin{solution}
+Let $v = (x,y)\neq (0,0)$ be an eigenvector of $T$, and let $\lambda$ be its associated eigenvalue. Then we have $Tv = \lambda v$, or $(y, x+y) = (\lambda x, \lambda y)$, so that $y = \lambda x$ and $x+y = \lambda y$. This is a system of equations, so we substitute the first into the second and write $x + y = \lambda y\implies x + \lambda x = \lambda^2x\implies x(\lambda ^2 - \lambda - 1) = 0$. If $x = 0$, then we see $y=0$, which contradicts our assumption that $v$ is nonzero, so we have $\lambda^2-\lambda - 1 = 0\implies \boxed{\lambda_{1,2} = \frac{1 \pm \sqrt 5}{2}}.$
+\end{solution}
+
+\begin{itemize}
+    \item[(c)] \textit{Find a basis of $\R^2$ consisting of eigenvectors of $T$.}
+\end{itemize}
+\begin{solution}
+For brevity, denote the two eigenvalues of $T$ as $\phi := \frac{1+\sqrt 5}{2}$ and $\psi := \frac{1-\sqrt 5}{2}$.
+
+For the eigenvalue $\phi$, we see that if $v = (x,y)$ is a $\phi$-eigenvector, then $Tv = \phi v \implies (y, x+y) = (\phi x, \phi y)$. Letting $x = 1$ (this is legal as eigenvectors are unique up to rescaling), we see that $(y, 1+y) = (\phi, \phi y)$, so $ y = \phi$, so $v = (1, \phi)$ is a $\phi$-eigenvector. [Indeed, we see that $\phi^2 = \phi +1$, so the calculation does check out.]
+
+For the eigenvalue $\psi$, we see that if $w = (x,y)$ is a $\psi$-eigenvector, then $Tw = \psi w\implies (y, x+y) = (\psi x, \psi y)$. Again, picking $x = 1$, we see that $(y, 1+y) = (\psi, \psi y)$ so that $w = (1, \psi)$ is a $\psi$-eigenvector.
+
+Since $\phi\neq \psi$, it is easy to see that $\{v, w\}$ is linearly independent, and thus a basis for $\R^2$ is given by
+$$\set{v, w} = \set{(1, \phi), (1,\psi)} = \boxed{\set {\paren{1, \frac{1+\sqrt 5}2}, \paren{1, \frac{1-\sqrt 5}2}}}.$$
+\end{solution}
+
+\begin{itemize}
+    \item[(d)] \textit{Use the solution to part $(c)$ to compute $T^n(0, 1)$. Conclude that}
+    $$F_n = \frac 1{\sqrt 5}\brak{
+    \paren{\frac{1+\sqrt 5}2}^n - \paren{\frac{1-\sqrt 5}2}^n
+    } = \frac 1{\sqrt 5}(\phi^n-\psi^n).$$
+\end{itemize}
+\begin{proof}
+Fix the same notation as in part (c). Notice that
+$$v-w = (1, \phi) - (1,\psi) = \paren{0, \frac{1+\sqrt 5-(1-\sqrt 5)}{2}} = \paren{0, \sqrt 5},$$
+so that $(0, 1)= \frac 1{\sqrt 5}(v - w).$ Now note that $Tv = \phi v$ and $Tw = \psi w$, so we have
+$$T^n(0, 1) = T^n\paren{\frac 1{\sqrt 5}(v-w)} = \frac 1{\sqrt 5}T^n(v-w)$$
+$$= \frac 1{\sqrt 5}(T^nv - T^nw) = \boxed{\frac 1{\sqrt 5}(\phi^n v - \psi^n w)}.$$
+
+Now, by expanding the above, we see that
+$$T^n(0, 1)= \frac 1{\sqrt 5}(\phi^n v - \psi^nw) = \frac 1{\sqrt 5}[\phi^n(1, \phi) - \psi^n(1, \psi)]$$
+$$ = \frac{1}{\sqrt 5}[( \phi^n, \phi^{n+1}) - (\psi^n, \psi^{n+1})]=\paren{
+\frac 1{\sqrt 5}(\phi^n-\psi^n), \frac 1{\sqrt 5}(\phi^{n+1} - \psi^{n+1})
+}.$$
+But by part (a), we see that $T^n(0, 1) = (F_n, F_{n+1})$, so that by matching components, we have
+$F_n =\frac 1{\sqrt 5}(\phi^n-\psi^n),$
+as desired.
+\end{proof}
+
+\begin{itemize}
+    \item[(e)] \textit{Use part $(d)$ to conclude that for each positive integer $n$, the Fibonacci number $F_n$ is the integer that is closest to $\ds\frac 1{\sqrt 5}\paren{\frac{1+\sqrt 5}2}^n = \frac {\phi^n}{\sqrt 5}$.}
+\end{itemize}
+\begin{proof}
+Write $F_n = \frac 1{\sqrt 5}\phi^n - \frac 1{\sqrt 5}\psi^n$. Clearly from part (a), $F_n$ is an integer, so it suffices to show that
+$$\abs{F_n - \frac{\phi^n}{\sqrt 5}} < \frac 12.$$
+Now
+$$\abs{F_n - \frac{\phi^n}{\sqrt 5}} = \abs{-\frac 1{\sqrt 5}\psi^n} = \abs{\frac 1{\sqrt 5}}\cdot \abs{\frac{1-\sqrt 5}2}^n.$$
+Noting that $2 < \sqrt 5 < 3$, we see that $1/\sqrt 5 < 1/2$ and
+$$-3<-\sqrt 5 < -2\implies -2<1-\sqrt 5 < -1<0 \implies -1 < \frac{1-\sqrt 5}{2} < 0,$$
+so that $\abs{\frac{1-\sqrt 5}2} < 1 \implies \abs{\frac{1-\sqrt 5}2}^n < 1$. Hence
+$$\abs{F_n - \frac{\phi^n}{\sqrt 5}} = \abs{-\frac 1{\sqrt 5}\psi^n} = \abs{\frac 1{\sqrt 5}}\cdot \abs{\frac{1-\sqrt 5}2}^n < \frac 12\cdot 1 = \frac 12,$$
+which shows that $F_n$ is the integer closest to $\phi^n/\sqrt 5$.
+\end{proof}
+\section*{Homework 3}
+\subsection*{[6A] Inner Products and Norms}
+\subsubsection*{6A.11 A Basic Cauchy-Schwarz Inequality Proof}
+\textit{Prove that $$16 \leq (a+b+c+d)\paren{\frac 1a + \frac 1b + \frac 1c + \frac 1d}$$ for all positive integers $a,b,c,d$.}
+
+We first derive a special case of the Cauchy-Schwarz inequality in $\R^4$. Take two vectors $x = (x_1, x_2, x_3, x_4), y=(y_1, y_2, y_3, y_4)\in \R^4$, where the inner product is the usual dot product. The Cauchy-Schwarz inequality thus tells us that
+$$\gen{x,y} \leq \norm x\norm y \implies \gen{x,y}^2 \leq\norm x^2\norm y^2 = \gen{x,x}\gen{y,y}.$$
+For the regular dot product in $\R^4$, we thus have
+\begin{equation}\label{r4cauchy}
+(x_1y_1+x_2y_2+x_3y_3+x_4y_4)^2 \leq (x_1^2+x_2^2+x_3^2 + x_4^2) (y_1^2+y_2^2+y_3^2+y_4^2).
+\end{equation}
+Now, we apply equation \eqref{r4cauchy} to the exercise.
+\begin{proof}
+Fix $a,b,c,d\in \R^+$, and let $x= \paren{\sqrt a,\sqrt b,\sqrt c, \sqrt d}$ and $y =\\ \paren{\frac 1{\sqrt a},\frac 1{\sqrt b},\frac 1{\sqrt c},\frac 1{\sqrt d}}$. By \eqref{r4cauchy} we immediately see that
+$$16 = 4^2 = (1+1+1+1)^2 =  \paren{\frac{\sqrt a}{\sqrt a}+\frac{\sqrt b}{\sqrt b}+\frac{\sqrt c}{\sqrt c}+\frac{\sqrt d}{\sqrt d}}^2$$
+$$\leq \paren{(\sqrt a)^2 + (\sqrt b)^2 + (\sqrt c)^2 + (\sqrt d)^2}\paren{\paren{\frac 1{\sqrt a}}^2 + \paren{\frac 1{\sqrt b}}^2 + \paren{\frac 1{\sqrt c}}^2 + \paren{\frac 1{\sqrt d}}^2}$$
+$$=(a+b+c+d)\paren{\frac 1a + \frac 1b + \frac 1c + \frac 1d},$$
+so we are done.
+\end{proof}
+[Note that this is in more detail than I would have preferred.]
+
+\newpage
+\subsubsection*{6A.19 Norm Identity I}
+\textit{Suppose $V$ is a real inner product space. Prove that for all $u,v\in V$,}
+$$\gen{u, v} = \frac{\norm{u+v}^2 - \norm{u-v}^2}{4}.$$
+\begin{proof}
+Let $u, v \in V$, where $V$ is a \textbf{real} vector space. Then $\gen{u, v} = \overline{\gen{v,u}} = \gen{v,u}$, so that $\gen{u, -v} = -\gen{u, v} = \gen{-u, v}$, so we use these to simplify as follows:
+$$\frac{\norm{u+v}^2 -\norm{u-v}^2}4 = \frac{\gen{u+v, u+v} - \gen{u-v, u-v}}{4}$$
+$$=\frac{(\gen{u,u} + \gen{u,v} + \gen{v,u} + \gen{v,v}) - (\gen{u, u} + \gen{u, -v} + \gen{-v, u} + \gen{-v, -v})}{4}$$
+$$=\frac{\gen{u,u} + 2\gen{u,v} + \gen{v,v} - \gen{u,u} + 2\gen{u, v} - \gen{v,v}}4$$
+$$=\frac{2\gen{u,v} + 2\gen{u,v}}4 = \frac{4\gen{u, v}}4 = \gen{u,v},$$
+which completes the proof.
+\end{proof}
+
+\subsubsection*{6A.27 Norm Identity II}
+\textit{Suppose $u, v, w\in V$. Prove that}
+\begin{equation}\label{parallelogram}
+\norm{w - \frac 12(u+v)}^2 =\frac{\norm{w-u}^2 + \norm{w-v}^2}2 - \frac{\norm{u-v}^2}4.
+\end{equation}
+\textit{Discussion}: This equality roughly resembles the parallelogram equality, so we try to rearrange it to see if anything is useful. Note that for any scalar $\alpha\in F$ and any $v\in V$, we have $\norm{\alpha v} = |\alpha|\norm v$. We write
+$$\norm{w - \frac 12(u+v)}^2 =\frac{\norm{w-u}^2 + \norm{w-v}^2}2 - \frac{\norm{u-v}^2}4$$
+$$\iff \norm{w - \frac 12(u+v)}^2 + \frac{\norm{u-v}^2}{4}= \frac{\norm{w-u}^2}2+ \frac{\norm{w-v}^2}2$$
+$$\iff \norm{w - \frac 12(u+v)}^2 + \paren{\frac{\norm{u-v}}{2}}^2 =\frac{\norm{w-u}^2}2+ \frac{\norm{w-v}^2}2$$
+$$\iff \norm{w - \frac 12(u+v)}^2 + \norm{\frac{u-v}2}^2 = \frac{\norm{w-u}^2}2+ \frac{\norm{w-v}^2}2.$$
+This suggests to us based on the parallelogram equality that we should find vectors $u', v'$ such that
+$$u' + v' = w - \frac 12(u+v) \textrm{ and } u' - v' = \frac 12 (u-v).$$
+Combining the two equations, we see
+$$2u' = w - \frac 12(u+v) + \frac 12(u-v) = w - \frac 12u - \frac 12v + \frac 12u - \frac 12v = w-v,$$
+so that $u' = (w-v)/2$. Hence,
+$$v' = u'- \frac 12(u-v) = \frac 12(w-v) - \frac 12(u-v) = \frac 12(w-v-u+v) = \frac 12(w-u).$$
+We present our formal proof below.
+\begin{proof}[Proof 1]
+Fix $u,v,w\in V$, and define $u':= \frac 12(w-v)$ and $v' = \frac 12(w-u)$. Then by the parallelogram equality, we have
+$$\norm{u'+v'}^2 + \norm{u'-v'}^2 = 2\paren{\norm {u'}^2 + \norm{v'}^2}.$$
+Now, observe that $u' + v' = \frac 12(w-v + w-u)= w - \frac 12(u+v)$ and $u' - v' = \frac 12(w-v) - \frac 12(w-u) = \frac 12(w - v - w+u) = \frac 12(u-v)$. Observing that for any scalar $\alpha\in F$ and any $x\in V$, we have $\norm{\alpha x} = |\alpha|\norm x$, we write
+$$\norm{w - \frac 12(u+v)}^2 + \norm{\frac{u-v}2}^2 = 2\norm{u'}^2 + 2\norm{v'}^2$$
+$$\iff \norm{w - \frac 12(u+v)}^2 + \frac{\norm{u-v}^2}{2^2} = 2\norm{\frac{w-v}2}^2 + 2\norm{\frac{w-u}2}^2$$
+$$\iff \norm{w - \frac 12(u+v)}^2 + \frac{\norm{u-v}^2}4 = \frac{2\norm{w-v}^2}4 + \frac{2\norm{w-u}^2}4$$
+$$\iff \norm{w-\frac 12(u+v)}^2 = \frac{\norm{w-u}^2 + \norm{w-v}^2}{2} - \frac{\norm{u-v}^2}4,$$
+which completes the proof.
+\end{proof}
+
+Alternatively, we can brute-force our way through. In the proof below, we write inner products via juxtaposition for clarity purposes. This means that we have $uv = \overline{vu}$ and $u(\lambda v)  =\bar\lambda uv$. We also shorten $\gen{v,v}$ as just $v^2$. This is \textit{not} the same as $\norm v^2$ below.
+\begin{proof}[Proof 2]
+By direct computation, we expand out both sides. On one side,
+$$\frac 12(\norm{w-u}^2+\norm{w-v}^2) - \frac 14\norm{u-v}^2$$
+$$=\frac 12[(w-u)(w-u) + (w-v)(w-v)] - \frac 14(u-v)(u-v)$$
+$$=\frac 12(ww + uu - uw - wu) + \frac 12(ww + vv - vw - wv) - \frac 14(u-v)(u-v)$$
+$$=ww + \frac 12uu + \frac 12vv - \frac 12(uw + wu + vw + wv) - \frac 14(uu+vv-vu-uv)$$
+$$=w^2 + \frac 12({u^2+v^2}) - \frac 12(uw + wu + vw + wv) - \frac 14(u^2+v^2) + \frac 14(vu + uv)$$
+$$=w^2 + \frac 14(u^2+v^2) - \frac 12(\Re(uw) + \Re(vw)) + \frac 14(\Re(vu))$$
+
+On the other side,
+$$\norm{w - \frac 12(u+v)}^2 = \paren{w - \frac 12(u+v)}\paren{w - \frac 12(u+v)}$$
+$$=ww + \frac 14(u+v)^2 - \frac 12(u+v)w - (w)\frac 12(u+v)$$
+$$=w^2 + \frac 14(u+v)(u+v) - \frac 12((u+v)w + w(u+v))$$
+$$=w^2 + \frac 14(uu+vv+vu+uv) - \frac 12(uw + vw + wu + wv)$$
+$$=w^2 + \frac 14(u^2 + v^2) -\frac 12(\Re(uw) + \Re(vw)) + \frac 14(\Re(vu)),$$
+so both sides must be equal.
+\end{proof}
+\subsubsection*{6A.28 Closest Points}
+\textit{Suppose $C\subseteq V$ with the property that $u,v\in C$ implies $\frac 12(u+v)\in C$. Let $w\in V$. Show that there is at most one point in $C$ that is closest to $w$. In other words, show that there is at most one point $u\in C$ such that $\norm{w-u} \leq \norm{w-v}$ for all $v\in C$. \textbf{Hint:} Use the previous exercise.}
+\begin{proof}
+Fix $w\in V$. For contradiction, let $u,v\in C$ be such that $u\neq v$ and that for all $x\in C$, we have $\norm{w-u}, \norm{w-v} \leq \norm{w-x}$. That is, assume that there are two distinct ``closest" vectors $u, v$ of $w$. Then by applying equation \eqref{parallelogram} from Exercise 27, we see that (by appealing to minimality of $u$)
+$$\norm{w-\frac 12(u+v)}^2 = \frac{\norm{w-u}^2 + \norm{w-v}^2}{2} - \frac{\norm{u-v}^2}4$$
+$$\implies \norm{w-\frac 12(u+v)}^2\leq \frac{\norm{w-u}^2}{2} + \frac{\norm{w-u}^2}2- \frac{\norm{u-v}^2}4 \leq \norm{w-u}^2,$$
+so that $\norm{w-\frac 12(u+v)} \leq \norm{w-u}$, and thus $\frac 12(u+v)\in C$ is closer to $w$ than $u$, contradicting the fact that we assumed that $u$ was closest to $w$. Thus, there can only be at most one vector in $C$ that is closest to $w$.
+\end{proof}
+\subsection*{[6B] Orthonormal Bases}
+\subsubsection*{6B.2 Condition for Vector Lying in Span of Orthonormal System}
+\textit{Suppose $e_1, \ldots, e_m$ is an orthonormal list of vectors in $V$, and let $v\in V$. Prove that}
+$\ds\norm v^2 = \sum_{i=1}^m |\gen{v, e_i}|^2$
+\textit{if and only if $v \in \gen{e_1, \ldots, e_m}$.}
+\begin{proof}
+This is Example 34.8 in the main text. We print a more explicit version here.
+
+$(\implies):$ Suppose $\norm v^2 = \abs{\gen{v, e_1}}^2 + \cdots + \abs{\gen{v, e_n}}^2$. Now, since $\{e_i\}_{i=1}^m$ is linearly independent, extend $\{e_i\}_{i=1}^m$ to be a basis $\{e_i\}_{i=1}^m \cup \{v_j\}_{j>m}$ of $V$. Then $V = \sum a_ie_i + \sum b_jv_j$, so
+$$\norm v^2 = \gen{v, v} = \gen{\sum_i a_ie_i + \sum_j b_jv_j, v}=\sum_i \gen{a_ie_i, v} + \sum_j\gen{b_jv_j, v} = \sum_{i=1}^m \abs{\gen{v,e_i}}^2.$$
+Equating like terms, we see that we must have $b_j = 0$, so that we must have $v\in\gen{e_1, \ldots, e_m}$.
+
+$(\impliedby)$: Suppose $v\in \gen{e_1, \ldots, e_m}$. Then it follows from Lemma 34.6 that
+$$v = \sum_{i=1}^m \gen{v, e_i}e_i, \textrm{ so that }\norm v^2 = \gen{v,v} = \sum_{i=1}^m \gen{v, e_i},$$
+from Proposition 34.7. This completes the proof.
+\end{proof}
+
+\subsubsection*{6B.14 Small Distance to Orthonormal Basis}
+\textit{Suppose $e_1, \ldots, e_n$ is an orthonormal basis of $V$ and $v_1, \ldots, v_n$ are vectors in $V$ such that $\norm{e_j - v_j} < 1/\sqrt n$ for each $j$. Prove that $v_1, \ldots, v_n$ is a basis for $V$.}
+\begin{proof}
+Suppose for contradiction that $\{v_i\}_{i=1}^n$ is \textbf{not} a basis for $V$. Because we have $n$ vectors $v_i$, this means that the $v_i$ are linearly dependent, so there exists some $a_i\in F$, not all zero, such that $\ds\sum_{i=1}^n a_iv_i = 0$. Observe that $\ds\sum_{i=1}^n a_iv_i = \sum_{i=1}^n a_i(v_i - e_i + e_i) = \sum_{i=1}^n a_i(v_i - e_i) + \sum_{i=1}^n a_ie_i$, hence
+\begin{equation}\label{norm}
+\norm{\sum_{i=1}^n a_i(v_i-e_i)} = \norm{\sum_{i=1}^n a_ie_i}.
+\end{equation}
+Now, notice that by the Triangle Inequality we have
+$$\norm{\sum_{i=1}^n a_i(v_i-e_i)} \leq \sum_{i=1}^n \norm{a_i(v_i-e_i)} = \sum_{i=1}^n |a_i|\norm{v_i-e_i},$$
+so by our assumption that $\norm{e_i-v_i} < 1/\sqrt n$ for all $i\leq n$, we have
+$$\sum_{i=1}^n |a_i|\norm{v_i-e_i} < \sum_{i=1}^n |a_i| \frac 1{\sqrt n} = \frac 1{\sqrt n}\sum_{i=1}^n |a_i|.$$
+Now, by Cauchy-Schwarz, we see that
+$$\frac 1{\sqrt n}\sum_{i=1}^n |a_i| = \frac 1{\sqrt n}\sum_{i=1}^n (1\cdot |a_i|) \leq \frac 1{\sqrt n}\cdot\sqrt{\sum_{i=1}^n 1 \cdot \sum_{i=1}^n |a_i|^2} = \frac{\sqrt n}{\sqrt n}\cdot \sqrt{\sum_{i=1}^n |a_i|^2}$$
+$$\implies\frac 1{\sqrt n}\sum_{i=1}^n |a_i| \leq \sqrt{\sum_{i=1}^n |a_i|^2},$$
+but by the fact that the $e_i$ are orthonormal, we see that $\ds\norm {\sum_{i=1}^n a_ie_i} = \sqrt{\sum_{i=1}^n |a_i|^2}$. Hence, we have just shown that from equation \eqref{norm} that
+$$\norm{\sum_{i=1}^n a_ie_i} \leq \sum_{i=1}^n |a_i|\norm{v_i-e_i} \textcolor{red}< \textcolor{black}{\frac 1{\sqrt n}\sum_{i=1}^n |a_i|\leq \sqrt{\sum_{i=1}^n |a_i|^2} = \norm{\sum_{i=1}^n a_ie_i},}$$
+a contradiction. Hence, the $\{v_i\}_{i=1}^n$ must be linearly independent, and since $\dim V = n$, we have that $\{v_i\}_{i=1}^n$ is a basis for $V$.
+\end{proof}
+\newpage
+\section*{Homework 4}
+Notation: In the Gram-Schmidt Procedure, we define the vector $u_k$, for $k\geq 2$, inductively by $\ds u_k = v_k - \sum_{i=1}^{k-1} \gen{v_k, e_i}e_i$, as we did in Theorem 38.1.
+\subsection*{[6B] Orthonormal Bases}
+\subsubsection*{6B.7 Example of the Riesz Representation Theorem}
+\textit{Find a polynomial $q\in\mathcal P_2(\R)$ such that}
+$$p\paren{\frac 12} = \int_0^1 p(x) q(x)\, dx$$
+\textit{for every $p\in\mathcal P_2(\R)$.}
+
+\begin{solution}
+We claim (without proof) that $\langle p, q\rangle = \int_0^1 p(x)q(x)\, dx$ is an inner product and that the mapping $\phi: \mathcal P_2(\R) \to \R$ given by $p\mapsto p(1/2)$ is a linear functional.\footnote{For the reader familiar with Math 120B, this should be fairly evident.} Hence, the Riesz Representation Theorem applies and there exists a unique $q\in\R$ such that
+$$p\paren{\frac 12} = \gen{p,q} = \int_0^1 p(x)q(x)\, dx.$$
+We know that $\{1, x, x^2\}$ is a basis for $\mathcal P_2(\R)$, so we apply the Gram-Schmidt Procedure to this basis to obtain an orthonormal basis. If $v_1 = 1$, $v_2 = x$, and $v_3 = x^2$, we see that
+$$\norm{v_1}^2 = \int_0^1 1\cdot 1\, dx  = x\Big|_0^1 = 1-0 = 1,$$
+so $e_1 = v_1/\norm{v_1} = v_1 = 1$. Now
+$$u_2 = v_2 - \gen{v_2,e_1}e_1 = x - 1\int_0^1 x\cdot 1\, dx = x - \frac 12 \textrm{ and }$$
+$$\norm{u_2}^2 = \int_0^1 x^2-x+\frac 14\, dx = \frac 1{12},$$
+so $e_2 = u_2/\norm{u_2} = \sqrt{12}\paren{x-\frac 12} = 2\sqrt 3\paren{x-\frac 12}$. Finally, we have
+$$u_3 = v_3 - \gen{v_3,e_1}e_1 - \gen{v_3,e_2}e_2$$
+$$ = x^2 -1\int_0^1 x^2 \, dx - 2\sqrt 3\paren{x-\frac 12}\int_0^1 x^2 \cdot 2\sqrt 3\paren{x-\frac 12}\, dx$$
+$$=x^2 - \frac 13 - 12\paren{x-\frac 12}\int_0^1 x^3  -\frac 12x^2 \, dx = x^2 - \frac 13 - \paren{x-\frac 12} = x^2 - x + \frac 16.$$
+Now
+$$\norm{u_3}^2 = \int_0^1\paren{x^2 - x + \frac 16}^2\, dx = \frac 1{180},$$
+so $e_3 = u_3/\norm{u_3} = \sqrt{180}\paren{x^2 - x + \frac 16} = 6\sqrt 5\paren{x^2-x+\frac 16}$. Hence, an orthonormal basis of $\mathcal P_2(\R)$ is $\{1, 2\sqrt 3\paren{x-\frac 12}, 6\sqrt 5\paren{x^2-x+\frac 16}\}$.
+
+Now, in the proof of the Riesz Representation Theorem, we let $q = \overline{\phi(e_1)}e_1 + \overline{\phi(e_2)}e_2 + \overline{\phi(e_3)}e_3$. Since we are working over the reals, we just have $q = \ds\sum_{i=1}^3 \phi(e_i)e_i$, so we have
+$$\phi(e_1) = 1, \phi(e_2)  = 2\sqrt 3\paren{\frac 12-\frac 12} = 0, \phi(e_3) = 6\sqrt 5\paren{\frac 14 - \frac 12 + \frac 16} = -\frac {\sqrt 5}{2}.$$
+Hence
+$$q(x) = 1- \frac{\sqrt 5}2 \cdot 6\sqrt 5\paren{x^2 - x + \frac 16} = 1 - 15\paren{x^2 - x + \frac 16} = \boxed{-15x^2 + 15x-\frac 32},$$
+so we are done.
+\end{solution}
+\subsection*{[6C] Orthogonal Complements}
+\subsubsection*{6C.4 Finding an Orthonormal Basis of $U^\perp$}
+
+\textit{Suppose $U\leq\R^4$ is given by $U = \mathrm{span}((1,2,3,-4), (-5,4,3,2))$. Find and orthonormal basis of $U$ and an orthonormal basis for $U^\perp$.}
+
+This problem is very tedious to solve (as well as a waste of space), so we describe a solution here. We can apply the Gram-Schmidt Procedure to the two basis vectors given to obtain an orthonormal basis $\{e_1, e_2\}$ of $U$. Since $V = U \oplus U^\perp$, we extend to an orthonormal basis $\{e_1, e_2, e_3, e_4\}$. Now, $\{e_3, e_4\}$ is an orthonormal basis for $U^\perp$.
+
+\subsubsection*{6C.5 Orthogonal Projection of Orthogonal Complement}
+\textit{Suppose $V$ is finite-dimensional and $U\leq V$. Show that $P_{U^\perp} = I - P_U$, where $I$ is the identity operator on $V$.}
+\begin{proof}
+Fix an arbitrary $v\in V$, and let $U\leq V$. Denote $W := U^{\perp}$. Then $V = U\oplus W$, so there exist unique $u\in U$, $w\in W$ such that $v = u+w$. However, $W^\perp = U$, so that $v = w + u \in W\oplus W^{\perp}$ (where we are justified in using the $\oplus$ symbol as $U\cap W = W^{\perp}\cap W = \varnothing$). Hence $P_{U^\perp}(v) = P_W(v) = P_W(w+u) = w$, but we also note that
+$$(I-P_U)(v) = (I-P_U)(u+w) = I(u+w) - P_U(u+w) = u+w-u = w = P_W(v).$$
+Hence $I-P_U = P_W = P_{U^\perp}$.
+\end{proof}
+\subsubsection*{6C.8 When are Idempotent Operators  Orthogonal Projections?}
+\textit{Suppose $V$ is finite-dimensional and $P\in\lin(V)$ satisfies $P^2=P$ and $\norm{Pv}\leq \norm v$ for every $v\in V$. Prove that there exists a subspace $U\leq V$ such that $P = P_U$.}
+\begin{proof}
+It would be nice if we had $U = \im P$, so we claim that $U = \im P$, and naturally, that $U^\perp = \ker P$. Fix $u\in \im P$ and $w\in \ker P$. We first show $\gen{u,w} = 0$. Since $u\in\im P$, there exists $x\in V$ such that $u = Px$. Hence $Pu = PPx = P^2x = Px = u$, so $Pu = u$. Hence for some $w\in\ker P$, $P(u+w) = Pu + Pw = u + Pw = u$. Similarly, for any $a\in F$, we have $P(u+aw) = Pu + P(aw) = u + aPw = u$, so that $\norm u^2 = \norm{P(u + aw)}^2 \leq \norm{u+aw}^2$ by assumption. This implies $\norm u \leq \norm{u+aw}$, so by Example 33.3, we have $\gen{u, w} = 0$. Hence $u\perp w$, so $\ker P \perp \im P$, so that $\ker P \subseteq (\im P)^\perp$.
+
+It remains to show that $V = \ker P \oplus \im P$, so that $(\im P)^\perp =\im P$. Fix $v\in V$, so that $Pv\in \im P$. Now $P^2v = Pv$, so that $P^2v - Pv = 0 \iff P(v-Pv) = 0$, so that $v-Pv\in \ker P$. Hence $v = Pv + (v-Pv)\in \im P + \ker P$, hence $V = \im P + \ker P$. Now, suppose $v\in \im P\cap \ker P$. Then there exists $u\in V$ such that $v = Pu$, and we know $Pv = 0$. But $0 = Pv = P^2u = Pu = v$, so $v = 0$; i.e., $\im P\cap \ker P = 0$. Hence $V = \ker P\oplus \im P$.
+
+It follows that for any $v\in V$, we can uniquely write $v = u+w$, where $u\in\im P$ and $w\in \ker P$, so that we have $P(v) = P(u+w) = Pu + Pw = Pu + 0 = Pu = u$. Since $(\im P)^\perp = \ker P$, we have that $P = P_{\im P}$, and we are done.
+\end{proof}
+
+\subsection*{[7A] Self-Adjoint and Normal Operators}
+\subsubsection*{7A.1 Calculating an Adjoint}
+\textit{Suppose $n$ is a positive integer. Define $T\in\lin(\F^n)$ by} $T(z_1, \ldots, z_n) = (0, z_1, \ldots, z_{n-1}).$ \textit{Find a formula for $T^*(z_1, \ldots, z_n)$.}
+\begin{solution}
+Let $z = (z_1, \ldots, z_n)$ and $w = (w_1,\ldots, w_n)$ in $\F^n$. Then the adjoint must satisfy $\gen{Tz, w} = \gen{z, T^*w}$. We have
+$$\gen{Tz, w} = \gen{(0, z_1, \ldots, z_{n-1}), (w_1, \ldots, w_n)} = \sum_{i=2}^n z_{i-1}\overline{w_i}$$
+$$=z_1\overline{w_2} + z_2\overline{w_3} + \cdots + z_{n-1}\overline{w_n}= \gen{z, T^*w}.$$
+From here, it is easy to guess that $T^*(w) = T^*(w_1, \ldots, w_n) = ({w_2}, {w_3}, \ldots, {w_n}, 0)$, and we verify:
+$$\gen{z, T^*w} = \gen{(z_1, \ldots, z_n), (w_2, \ldots, w_n, 0)} = \sum_{j=1}^{n-1} z_j\overline{w_{j+1}} = \sum_{i=2}^n z_{i-1}\overline{w_i} = \gen{Tz, w}.$$
+
+Hence $T^*(z_1, \ldots, z_n) = \boxed{(z_2, \ldots, z_n, 0)}$.
+\end{solution}
+\subsubsection*{7A.3 Invariance of Orthogonal Complement}
+\textit{Suppose $T\in\lin(V)$ and $U\leq V$. Prove that $U$ is invariant under $T$ if and only if $U^\perp$ is invariant under $T^*$.}
+\begin{proof} Fix $T\in\lin(V)$, and $U\leq V$, so that $V = U\oplus U^\perp$.
+
+$(\implies)$: Suppose $U$ is invariant under $T$. Fix $u\in U$, so that $Tu\in U$. Hence for any $w\in U^\perp$, we have $Tu \perp w$ (as $Tu\in U$), so that $\gen{Tu, w} = 0$. But $\gen{Tu, w} = \gen{u, T^*w} = 0$, so that $u\perp T^*w$. By definition of $U^\perp$, we have $T^*w\in U^\perp$, so that $U^\perp$ is invariant under $T^*$.
+
+$(\impliedby)$: Suppose $U^\perp$ is invariant under $T$. Fix $w\in U^\perp$, so that $T^*w\in U^\perp$. Hence for any $u\in U = (U^{\perp})^{\perp}$, we have $u\perp Tw$, so that $\gen{u, T^*w} = 0$. But $\gen{Tu, w} = \gen{u, T^*w} = 0$, so that $Tu\perp w$. But by definition of $U^{\perp}$, we see $Tu\in U$, so that $U$ is invariant under $T$.
+\end{proof}
+\newpage
+\section*{Homework 5}
+\subsection*{[7A] Self-Adjoint and Normal Operators}
+\subsubsection*{7A.11 Projection Iff Self-Adjoint}
+\textit{Suppose $P\in\lin(V)$ is such that $P^2=P$. Prove that there is a subspace $U\leq V$ such that $P = P_U$ if and only if $P$ is self-adjoint.}
+\begin{proof}
+$(\implies):$ Suppose $P=  P_U$ for some $U\leq V$. Then we write $V = U\oplus U'$. Pick $v, v'\in V$. Then $v = u+w$ and $v' = u' + w'$ for $u, u'\in U$ and $w, w'\in U^\perp$. Now
+$$\gen{Pv, v'}  = \gen{u, v'} = \gen{u, u'+w'} = \gen{u, u'} + \gen{u, w'} = \gen{u, u'}.$$
+However, since $w\perp u'$, we write
+$$\gen{Pv, v'} = \gen{u, u'} + 0 = \gen{u, u'}+\gen{w, u'} = \gen{u+w, u'} = \gen{v, u'} = \gen{v, Pv'},$$
+so that $P$ is self-adjoint.
+
+$(\impliedby)$: Suppose $P$ is self-adjoint and satisfies $P^2 = P$. We claim $U := \im P$. Since $P$ is self-adjoint, we see that $\im P = (\ker P)^\perp = U^\perp$, so $P = \im P\oplus \ker P$. Now, fix $v\in V$, and write $v = Pv + (v - Pv)$. Now $P(v-Pv) = Pv - P^2v = Pv-Pv = 0$, so $v-Pv\in \ker P$. Hence $Pv = u$, where $u = Pv\in \im P = U$, so that $P = P_U$.
+\end{proof}
+\subsection*{[7B] The Spectral Theorem}
+\subsubsection*{7B.2 Polynomial of Operator is Zero}
+\textit{Suppose that $T$ is a self-adjoint operator on a finite-dimensional inner product space and that $2$ and $3$ are the only eigenvalues of $T$. Prove that $T^2-5T + 6I = 0$.}
+\begin{proof}
+Since $T$ is self-adjoint, by the Spectral Theorem there exists an orthonormal eigenbasis $\{e_i\}_{i=1}^n$ of $V$, where $n := \dim V$. Since the only eigenvalues are $2$ and $3$, we either have $(T-2I)e_i = 0$ or $(T-3I)e_i = 0$ for each $e_i$. Hence $(T-2I)(T-3I)e_i = (T^2-5T+6I)e_i = 0$ for all $e_i$, so that $T^2 - 5T + 6I = 0$.
+\end{proof}
+\subsubsection*{7B.5 Normality and Eigenvectors}
+\textit{Suppose $V$ is a inner product space over $\R$, and let $T\in \lin(V)$. Prove that $T$ is self-adjoint if and only if all pairs of eigenvectors corresponding to distinct eigenvalues of $T$ are orthogonal and $V = E(\lambda_1, T)\oplus \cdots \oplus E(\lambda_m, T)$, where the $\lambda_i$ are distinct eigenvalues of $T$.}
+\begin{proof}
+$(\implies)$: Suppose $T$ is self-adjoint. Then by the Real Spectral Theorem, $V$ has an orthonormal eigenbasis, so we immediately have $V = E(\lambda_1, T)\oplus \cdots \oplus E(\lambda_m, T)$. That all pairs of eigenvectors corresponding to distinct eigenvalues are orthogonal comes from the fact that we chose an orthonormal eigenbasis by the Complex Spectral Theorem.
+
+$(\impliedby)$: Suppose all pairs of eigenvectors of $T$ corresponding to distinct eigenvectors of $T$ are orthogonal, and $V = E(\lambda_1, T) \oplus \cdots \oplus E(\lambda_m, T)$. Now, take orthonormal bases $\beta_i$ of each $E(\lambda_i, T)$. Then a basis for $V$ is the union $\beta := \beta_1 \cup \cdots \cup\beta_m$. If $v\in\beta$, then $v$ is normalized, and for if $v\in \beta_i$ and $w\in \beta_j$, $j\neq i$, we have $v\perp w$ by assumption. Hence $\beta$ is an orthonormal basis of $V$ consisting of eigenvectors of $T$, so by the Real Spectral Theorem, $T$ is self-adjoint.
+\end{proof}
+\newpage
+\subsubsection*{7B.7 $T^9 = T^8$ Implies $T^2 = T$ If $T$ is Self-Adjoint}
+\textit{Suppose $V$ is a complex inner product space and $T\in\lin(V)$ is a normal operator such that $T^9 = T^8$. Prove that $T$ is self-adjoint and $T^2 = T$.}
+\begin{proof}
+This is Example 67.3 in the main text. For convenience, we print a more explicit proof here.
+
+Suppose $T^9 = T^8$. Since $V$ is a complex vector space, $T$ has an eigenvector $v$ with some eigenvalue $\lambda$. Hence $T^8v = \lambda^8 v = \lambda^9 v = T^9v$, so that $\lambda^8(\lambda - 1)v = 0$. Since $v\neq 0$, we have $\lambda = 0, 1$, so $0$ and $1$ are the only possible eigenvalues of $T$. By the Complex Spectral Theorem, fix an orthonormal basis of $V$ of eigenvectors of $T$ such that $T$ has the matrix $A = \diag(\lambda_1, \ldots, \lambda_n)$. Now, the $\lambda_i$ are either $0$ or $1$, so that $\overline{A^T} = A$ (hence $T$ is normal) and $A^2 = \diag(\lambda_1^2, \ldots, \lambda_n^2) = \diag(\lambda_1, \ldots, \lambda_n) = A$, so that $T^2 = T$.
+\end{proof}
+\subsubsection*{7B.11 Cube Root of an Operator}
+\textit{Prove or give a counterexample: every self-adjoint operator on $V$ has a cube root, i.e., if $T\in\lin(V)$ is self-adjoint, then there exists $S\in\lin(V)$ such that $S^3 = T$.}
+
+\begin{solution}
+\textbf{This is true.} [Compare this with Example 67.4 in the main text.]
+\end{solution}
+\begin{proof}
+Suppose $T$ is self-adjoint. Then by the Spectral Theorem, there exists an orthonormal eigenbasis $\{e_i\}_{i=1}^n$ of $V$. Let $\lambda_i$ be the eigenvalue associated with each $e_i$, so that $T$ has matrix $A = \diag(\lambda_1, \ldots, \lambda_n)$ in this basis. Now, take $S$ to be the linear transformation given by the matrix $B := \diag\paren{\sqrt[3]{\lambda_1}, \ldots, \sqrt[3]{\lambda_n}}$ in the basis $\{e_i\}$. Clearly, $B^3 = A$, so that $S^3 = T$, so we are done.
+\end{proof}
+\section*{Homework 6}
+\subsection*{[7C] Positive Operators and Isometries}
+\subsubsection*{7C.7 Positive Operator is Positive Iff it is Actually Positive}
+\textit{Suppose $T\in\lin(V)$ is positive. Prove that $T$ is invertible if and only if $\gen{Tv, v} >0$ for every $v\in V$ with $v\neq 0$.}
+\begin{proof}
+$(\implies):$ Suppose $T$ is invertible, so $\ker T = \{0\}$. Since $T$ is positive, there exists $S$, self-adjoint, such that $S^2 = T$. Since $T$ is invertible, so is $S$, so for any $v\neq 0$, we see that $\gen{Tv, v} = \gen{S^2v, v} = \gen{Sv, Sv} = \norm{Sv}^2 > 0$.
+
+$(\impliedby)$: Suppose $\gen{Tv, v} > 0$ for every $v\in V$ with $v\neq 0$. Certainly, this implies $Tv \neq 0$. Hence, $T$ has trivial kernel, and is thus invertible.
+\end{proof}
+\subsubsection*{7C.11 Similar Normal Operators}
+\textit{Suppose $T_1,T_2$ are normal operators on $\lin(\F^3)$ and both operators have $2, 5, 7$ as eigenvalues. Prove that there exists an isometry $S\in\lin(\F^3)$ such that $T_1 = S^*T_2S$.}
+\begin{proof}
+By the spectral theorem, there exists an orthonormal eigenbasis $\{v_2, v_5, v_7\}$ for $T_1$, and an orthonormal eigenbasis $\{w_2, w_5, w_7\}$ for $T_2$. Define the operator $S$ by $Sv_i = w_i$, for $i= 2, 5, 7$. Since $\{v_2, v_5, v_7\}$ is an orthonormal basis and $\{Sv_2, Sv_5, Sv_7\} = \{w_2,w_5, w_7\}$ is orthonormal, $S$ is an isometry, so $S^* = S^{-1}$. Now $S^*T_2S(v) = S^*T_2S(a_2v_2 + a_5v_5 + a_7v_7) = S^*T_2(a_2w_2+a_5w_5 + a_7w_7) = S^*(2a_2w_2 + 5a_5w_5 + 7a_7w_7) = 2a_2v_2 + 5a_5v_5 + 7a_7v_7 = T_1(v)$.
+\end{proof}
+
+\subsubsection*{7C.12 Similar Normal Operators?}
+\textit{Give an example of two self-adjoint operators $T_1, T_2\in \lin(\F^4)$ such that the eigenvalues of both operators are $2,5,7$ but there does not exist an isometry $S\in\lin( \F^4)$ such that $T_1 = S^*T_2S$.}
+\begin{solution}
+Let $\{e_1,\ldots, e_4\}$ be the standard basis in $\F^4$ (which is orthonormal), and let $T_1$ and $T_2$ have the matrices $\diag(2, 2, 5, 7)$ and $\diag(2, 5, 7, 7)$ respectively. Clearly, $T_1$ and $T_2$ are both self-adjoint. But there is no invertible operator $S$ such that $T_1 = S^{-1}T_2S$, let alone an isometry. If $S$ were an invertible operator satisfying $T_1 = S^{-1}T_2S$, then consider the vector $v\in V$ such that $Sv = e_3$. Then
+$$T_1v = S^{-1}T_2Sv = S^{-1}T_2(e_3) = S^{-1}(7e_3) = 7v.$$
+Hence, $v$ is an eigenvector of $T_1$ with eigenvalue $7$, i.e., $v\in E(T_1, 7)$. Now, consider the vector $v'\in V$ such that $Sv' = e_4$. Then
+$$T_1v' = S^{-1}T_2Sv' = S^{-1}T_2(e_4) = S^{-1}(7e_4) = 7v'.$$
+Hence, $v'$ is also an eigenvector of $T_2$ with eigenvalue $7$, i.e, $v, v'\in E(T_1, 7)$. Now, $\dim E(T_1,7) = 1$, so $v' = \alpha v$ for some $\alpha\in \F$. But this is problematic, as $S(v'-v) = S((\alpha-1)v) = (\alpha-1)e_3$ and $S(v'-v) = Sv'-Sv = e_4-e_3 = (\alpha-1)e_3 \implies e_4 = \alpha e_3$, a contradiction, as $e_3$ and $e_4$ are linearly independent. Hence, no such invertible $S$ can exist, let alone an isometry (which is invertible by definition).
+\end{solution}
+\subsection*{[7D] Polar and Singular-Value Decompositions}
+\subsubsection*{7D.3 Reversed Polar Decomposition}
+\textit{Suppose $T\in\lin(V)$. Prove that there exists an isometry $S\in\lin(V)$ such that $T = \sqrt{TT^*}S$.}
+\begin{proof}
+Fix $T\in\lin(V)$, and consider $T^*\in\lin(V)$. By the Polar Decomposition, write $T^* = R\sqrt{T^{**}T^*} = R\sqrt{TT^*}$ for some isometry $R$. Now, write
+$$T = (T^*)^* = (R\sqrt{TT^*})^* = (\sqrt{TT^*})^*R^* = (\sqrt{TT^*})^*R^{-1}.$$
+But $\sqrt{TT^{*}}$ is self-adjoint by definition, so we have $T = \sqrt{TT^*}R^{-1}$. Set $S := R^{-1}$, which is also an isometry.
+\end{proof}
+\subsubsection*{7D.7 Calculating a Polar Decomposition}
+\textit{Define $T\in\lin(\F^3)$ by $T(z_1,z_2,z_3) = (z_3, 2z_1, 3z_2)$. Find an isometry $S\in\lin(\F^3)$ such that $T = S\sqrt{T^*T}$.}
+\begin{solution}
+The matrix of $T$ with respect to the standard basis is $M_T = \matnine 001200030$, so the matrix of the adjoint is $M_{T^*} = \overline{M_T} = \matnine 020003100$. Hence, we compute that the matrix of $T^*T$ is $M = \diag(4, 9, 1)$. From here, we read off the matrix of $\sqrt{T^*T}$ as $\diag(2,3,1)$, so we want a matrix $S$, isometric, such that
+$$\matnine 001200030 = S\matnine 200030001.$$
+Hence, we let $S$ be the matrix that corresponds to the permutation cycle $(1\;2\;3)$ in the symmetric group $S_3$, acting row-wise, i.e.,
+$$\matnine 001200030 = \matnine 001100010 \matnine 200030001.$$
+Hence, we define $S$ by the transformation that sends $(z_1, z_2, z_3) \mapsto (z_3, z_1, z_2)$, and it is easy to check that $S^*$ corresponds to $S^{-1}$, so $S$ is the isometry we are looking for.
+\end{solution}
+\subsubsection*{7D.17 Facts About the Singular Value Decomposition}
+\textit{Suppose $T\in\lin(V)$ has a singular-value decomposition given by $$Tv =s_1 \gen{v,e_1} f_1+\cdots+ s_n\gen{v,e_n}f_n$$
+for every $v\in V$, where the $s_i$ are the singular values of $T$ and the $e_i$ and $f_i$ form orthonormal bases of $V$.}
+\begin{itemize}
+    \item[(a)] \textit{Prove that if $v\in V$, then $T^*v = s_1\gen{v, f_1}e_1 + \cdots + s_n\gen{v, f_n}e_n$.}
+\end{itemize}
+\begin{proof}
+Observe that by construction of the decomposition $Te_i = s_if_i$, which means that $T$ can be viewed as a diagonal matrix $\diag(s_1, \ldots, s_n)$, where we write the matrix with respect to both bases $\{e_i\}$ and $\{f_i\}$. Because singular values are real, we see that the matrix of $T^*$ is the same as that for $T$, but that the roles of $\{e_i\}$ and $\{f_i\}$ have been exchanged, so $T^*f_i = s_i e_i$. Extending by linearity, we see that $T^*v = s_1\gen{v, f_1}e_1 + \cdots + s_n\gen{v, f_n}e_n$, which completes the proof.
+\end{proof}
+\begin{itemize}
+    \item[(b)] \textit{Prove that if $v\in V$, then $T^*Tv = s_1^2\gen{v, e_1}e_1+\cdots + s_n^2\gen{v, e_n}e_n$.}
+\end{itemize}
+\begin{proof}
+We compute:
+$$T^*(Tv)  = T^*\big(s_1\gen{v, e_1}f_1 + \cdots + s_n\gen{v, e_n}f_n\big) = \sum_{i=1}^n T^*\big(s_i\gen{v, e_i}f_i\big)$$
+$$=\sum_{i=1}^n s_i\gen{v, e_i}T^*(f_i) = \sum_{i=1}^n s_i\gen{v, e_i}(s_ie_i) = \sum_{i=1}^n s_i^2\gen{v, e_i}e_i,$$
+as expected.
+\end{proof}
+\begin{itemize}
+    \item[(c)] \textit{Prove that if $v\in V$, then $\sqrt{T^*T}v = s_1\gen{v, e_1}e_1 + \cdots + s_n\gen{v, e_n}e_n$.}
+\end{itemize}
+\begin{proof}
+The $s_i$ are by definition the eigenvalues of $\sqrt{T^*T}$, with corresponding eigenvectors $e_i$. Hence $\sqrt{T^*T}e_i = s_ie_i$, so extending by linearity, we get the formula we want.
+\end{proof}
+\begin{itemize}
+    \item[(d)] \textit{Suppose $T$ is invertible. Prove that if $v\in V$, then}
+    $$T^{-1}v = \frac{\gen{v, f_1}e_1}{s_1} + \cdots + \frac{\gen{v, f_n}e_n}{s_n}$$
+    \textit{for every $v\in V$.}
+\end{itemize}
+\begin{proof}
+First, we make sure that the division by the $s_i$ is legal. If $T$ is invertible, then $T^*$ must also be invertible as $\ker T = \{0\} \iff (\im T^*)^\perp = \{0\} \iff \im T^* = V$. Hence, neither $T$ nor $T^*$ have $0$ as an eigenvalue, so neither can $T^*T$ nor $\sqrt{T^*T}$. Hence, $0$ is not a singular value, so the division is legal here. Now, we compute --- it suffices to check that the given formula shows that $TT^{-1}e_i = T^{-1}Te_i = I$ for the basis vectors $e_i$ and $f_i$. Denote $Sv:=\ds\frac{\gen{v, f_1}e_1}{s_1} + \cdots + \frac{\gen{v, f_n}e_n}{s_n}$. Then by orthonormality of $\{e_i\}$ and $\{f_i\}$:
+$$TSf_i = T\paren{\frac{\gen{f_i, f_i}e_i}{s_i}} = \frac 1{s_i}T(e_i) = \frac 1{s_i}(s_i\gen{e_i, e_i}f_i) = \frac{s_i}{s_i}\cdot 1f_i = f_i, \textrm{ and}$$
+$$STe_i = S(s_i\gen{e_i, e_i}f_i) = s_iS(1f_i) = s_i \frac{\gen{f_i, f_i}e_i}{s_i} = 1e_i = e_i,$$
+so $S = T^{-1}$.
+\end{proof}
+\section*{Homework 7}
+\subsection*{[8A] Generalized Eigenvectors and Nilpotent Operators}
+\subsubsection*{8A.4 Distinct Generalized Eigenspaces Have Trivial Intersection}
+\textit{Suppose $T\in\lin(V)$ and $\alpha,\beta\in\F$ with $\alpha\neq \beta$. Prove that $G(\alpha, T) \cap G(\beta, T) = \set0$.}
+\begin{proof}
+Let $v\in G(\alpha, T)\cap G(\beta, T)$. If $v\neq 0$, then $v$ is both a generalized eigenvector corresponding to $\alpha$, and a generalized eigenvector corresponding to $\beta$. By Theorem 80.6, $\{v, v\}$ must be linearly independent, which is a contradiction, so $v = 0$.
+\end{proof}
+\subsubsection*{8A.6 This Operator Has No Square Root}
+\textit{Suppose $T\in\lin(\C^3)$ is defined by $(z_1, z_2, z_3) \mapsto (z_2, z_3, 0)$. Prove that $T$ has no square root, i.e., there is no $S\in\lin(\C^3)$ such that $S^2=T$.}
+\begin{proof}
+This is Example 93.3.
+\end{proof}
+\subsubsection*{8A.15 Counting}
+\textit{Suppose $\dim V =: n$ and $N\in\lin(V)$ is such that $\ker N^{n-1}\neq \ker N^n$. Prove that $N$ is nilpotent and $\dim\ker N^j=j$ for each integer $j$ with $0\leq j\leq n$.}
+\begin{proof}
+This is Example 107.2. Here is a proof in more detail.
+
+Since $\ker N^{n-1}\neq \ker N^n$, we see that $\ker N^{j} \neq \ker N^{j+1}$ for every $0\leq j\leq n-1$, as if $\ker N^j = \ker N^{j+1}$, we would have $\ker N^j = \ker N^{j+1} = \cdots = \ker N^{n-1} = \ker N^n$, a contradiction. Thus, we must have
+$$0=\dim\ker N^0 < \dim\ker N^1 < \dim\ker N^2 < \cdots < \dim\ker N^{n-1} < \dim\ker N^n,$$
+but we know that $\dim\ker N^n \leq n$. The inequality above is only possible if each $\ker N^j$, $0\leq j\leq n$, has dimension $j$, i.e., that the dimension of the kernel increases by $1$ for each application of $N$. This proves the second statement. Now, we know that $\dim \ker N^n = n$, but $n= \dim V$, so $\ker N^n = V$, which implies $N^n = 0$, so $N$ is nilpotent.
+\end{proof}
+\subsection*{[8B] Decomposition of an Operator}
+\subsubsection*{8B.3 Similar Transformations Have the Same Eigenvalues... the Same Number of Times}
+\textit{Suppose $T\in\lin(V)$. Suppose $S\in\lin(V)$ is invertible. Prove that $T$ and $S^{-1}TS$ have the same eigenvalues with the same multiplicities.}
+\begin{proof}
+It suffices to show that $T$ and $S^{-1}TS$ have the same characteristic polynomial. Let $p(\lambda) := \det (T-\lambda I)$ be the characteristic polynomial of $T$. However, observe that
+$$S^{-1}TS - \lambda I = S^{-1}TS - S^{-1}(\lambda I)S = S^{-1}(T-\lambda I)S, \textrm{ so}$$
+$$\det(S^{-1}TS-\lambda I) = \det(S^{-1}(T-\lambda I)S) = \det S^{-1} \cdot \det(T - \lambda I)\cdot \det S = \det(T-\lambda I),$$
+so $T$ and $S^{-1}TS$ have the same characteristic polynomial. Hence $T$ and $S^{-1}TS$ share the same eigenvalues, and the eigenvalues have the same multiplicity.
+\end{proof}
+\subsubsection*{8B.6 Computing a Square Root of $I+N$}
+\textit{Define $N\in\lin(\F^5)$ by $(x_1,\ldots, x_5)\mapsto (2x_2, 3x_3, -x_4, 4x_5, 0)$. Find a square root of $I+N$.}
+\begin{solution}
+We see that $N^5 = 0$. Now, apply the Taylor series of $\sqrt{1+x}$ as seen in lecture and write
+$$\sqrt{I+N} = 1 + a_2N + a_2N^2 + a_3N^3 + a_4N^4,$$
+where we are justified in leaving out the rest of the terms as $N^5=0$. From calculus, we know that if $f(x) = \sqrt{1+x}$, then the Taylor Series of $x$ centered at $x=0$ is
+$$f(x) = f(0) + f'(0)x + \frac{f''(0)}{2!}x^2 + \cdots,$$
+so we compute the relevant derivatives and get
+$$f(0) = 1, f'(0) = \frac 12, f''(0) = -\frac 14, f'''(0) = \frac 38, \textrm{ and } f''''(0) = -\frac{15}{16}.$$
+Hence
+$$\sqrt{1+x} = 1 + \frac 12x-\frac 18x^2 + \frac 3{8\cdot 3!}x^3 -\frac{15}{16\cdot 4!}x^4+\cdots$$
+$$=1 + \frac 12x - \frac 18x^2 + \frac{1}{16}x^3-\frac5{128}x^4,$$
+and replacing $x$'s with $N$'s, we see that
+$$\sqrt{1+N} = \boxed{1 + \frac 12N - \frac 18N^2+\frac 1{16}N^3 - \frac 5{128}N^4},$$
+which is good enough. We can find an explicit formula via computation of $N^i$, $i\leq 4$.
+\end{solution}
+\newpage
+\subsubsection*{8B.10 The Jordan-Chevalley Decomposition}
+\textit{Suppose $V$ is a vector space over $\C$ and $T\in\lin(V)$. Prove that there exist $D, N\in\lin(V)$ such that $T = D+N$, the operator $D$ is diagonalizable, $N$ is nilpotent, and $DN = ND$.}
+\begin{proof}
+Let $v_1, \ldots, v_n$ be a generalized eigenbasis of $V$, consisting of generalized eigenvectors of $T$. We know that $V = G(\lambda_1, T)\oplus \cdots \oplus G(\lambda_m, T)=: U_1 \oplus\cdots\oplus U_m$, where the $\lambda_i$ are the distinct eigenvalues of $T$. As such, the projection operators $P_i$ are well-defined, where $P_i(v)$ does the obvious thing of sending $v$ into its projection in $U_i$. Thus, we write $T$ as a sum of restrictions and projections as follows:
+$$T = T|_{U_1}P_1 + \cdots + T|_{U_m}P_m.$$
+Now, we know that $T|_{U_i}-\lambda_i I=:N_i \in \lin(U_i)$ is nilpotent, so we substitute this into the above to get
+$$T = (\lambda_1I+N_1)P_1 + \cdots + (\lambda_mI+N_m)P_m =\sum_{i=1}^m \lambda_iIP_i + \sum_{i=1}^m N_iP_i = \sum_{i=1}^m \lambda_iP_i + \sum_{i=1}^m N_iP_i.$$
+We claim that $D = \sum \lambda_iP_i$ and $N = \sum N_iP_i$ as above. First, we see that for each generalized eigenvector $v_j$ in the eigenbasis $(j\leq n)$, we see that $Dv_j = \lambda_i v_j$, where $\lambda_i$ is the eigenvalue corresponding to $v_j$. Hence, $D$ has the matrix $\diag(\lambda_1,\ldots, \lambda_m)$, where some of the $\lambda_i$ are repeated appropriately, so $D$ is diagonalizable as required. Similar to the computation for $D$, we observe that $Nv_j = N_iv_j$, where $i$ is chosen such that $\lambda_i$ is the corresponding eigenvalue for $v_j$. But each $N_i$ was nilpotent, so the sum $N$ is also nilpotent. But because $N_i\in\lin(U_i)$ and is nilpotent, we see that certainly $N^nv_j = N_i^nv_j = 0$, so $N$ is nilpotent. To see that $D$ and $N$ commute, we compute $DNv_j = D(N_iv_j) = \lambda_iN_iv_j \textrm{ and } NDv_j = N(\lambda_iv_j) = \lambda_iN_iv_j,$ so we are done.
+\end{proof}
+\section*{Homework 8}
+\subsection*{8C Characteristic and Minimal Polynomials}
+\subsubsection*{8C.1 Product of Eigentransformations is Zero: Cayley-Hamilton Edition}
+\textit{Suppose $T\in\lin(\C^4)$ is such that the eigenvalues of $T$ are $3, 5, 8$. Prove that $(T-3I)^2(T-5I)^2(T-8I)^2 = 0$.}
+\begin{proof}
+We know that $T\in\lin(\C^4)$, so one of the eigenvalues of $T$ must have multiplicity $2$. Hence, the characteristic polynomial of $T$ has the form $q(x) = (x-\lambda_1)^2(x - \lambda_2)(x-\lambda_3)\in\C[x]$, where $\lambda_1,\lambda_2, \lambda_3$ are $3, 5, 8$ in some order. Clearly $q$ divides $(x-3)^2(x-5)^2(x-8)^2$, so by Cayley-Hamilton, $q(T) = 0 \implies (T-3I)^2(T-5I)^2(T-8I)^2 = 0$.
+\end{proof}
+\subsubsection*{8C.4 An Introduction to Jordan Form}
+\textit{Give an example of an operator on $\C^4$ whose characteristic polynomial equals $(z-1)(z-5)^3$ and whose minimal polynomial equals $(z-1)(z-5)^2$.}
+\begin{solution}
+Let $T\in\lin(\C^4)$ be the matrix (on the next page) given by \newpage
+$$M_T := \begin{pmatrix}
+1 & 1 & 0 & 0 \\
+0 & 5 & 0 & 0 \\
+0 & 0 & 5 & 1 \\
+0 & 0 & 0 & 5 \\
+\end{pmatrix}.$$
+Clearly, the characteristic polynomial of $T$ is $(z-1)(z-5)^3$. Also, we can check that
+$$(M_T-I)(M_T-5I)^2 = \begin{pmatrix}
+0 & 1 & 0 & 0 \\
+0 & 4 & 0 & 0 \\
+0 & 0 & 4 & 1 \\
+0 & 0 & 0 & 4
+\end{pmatrix}\begin{pmatrix}
+-4 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 1 \\
+0 & 0 & 0 & 0
+\end{pmatrix}^2 = \mathbf{0}_{4\times 4},$$
+so the minimal polynomial is $(z-1)(z-5)^2$.
+\end{solution}
+We should notice these two Jordan blocks of $M_T$ above if we swap the second and third columns and adjust the basis accordingly:
+$$\tilde{M_T} = \begin{pmatrix}
+\red 1 & 0 & 0 & 0 \\
+0 & \bl 5 & \bl1 & \bl0 \\
+0 & \bl0 & \bl5 & \bl1 \\
+0 & \bl0 & \bl0 & \bl5 \\
+\end{pmatrix}.$$
+\subsubsection*{8C.18 The Companion Matrix}
+\textit{Suppose $a_0, \ldots, a_{n-1}\in\C$. Find the minimal and characteristic polynomials of the operator on $\C^n$ whose matrix with respect to the standard basis is
+$$\begin{pmatrix}
+0 & 0& 0&\cdots &0& -a_0 \\
+1 & 0 &0  &\cdots &0& -a_1 \\
+0 & 1 &0  &\cdots &0 &-a_2 \\
+\vdots & \vdots & \ddots & \ddots & \vdots & \vdots \\
+0 &0 &\cdots & 1 &0& -a_{n-2} \\
+0&0 &\cdots & 0 &1& -a_{n-1}
+\end{pmatrix}.$$}
+\begin{solution}
+Let $\{e_1, \ldots, e_n\}$ be the standard basis of $\C^n$. Reading off the matrix, we see $Te_i = e_{i+1}$ for $i \leq n-1$, and $Te_n = -a_0e_1 - \cdots - a_{n-1}e_n$. This implies that $T^je_1 = e_{j+1}$ for $j\leq n-1$, and $T^ne_1 = -a_0e_1 - \cdots - a_{n-1}e_n$. Hence, the set $\{T^je_1\}_{j=0}^{n-1}$ is just the standard basis rewritten, so it is linearly independent, so if
+$$b_0T^0e_1 + b_1T^1e_1 + \cdots + b_{n-1}T^{n-1}e_1 = 0,$$
+we must have $b_0 = \cdots = b_{n-1} = 0$. Rewriting this, if $q(z) = b_0 + b_1z + \cdots + b_{n-1}z^{n-1}$, then $q(z) = 0$. We have just shown that the minimal polynomial of $T$ must have degree at least $n$. Now, we know $T^ne_1 = -a_0e_1 - \cdots - a_{n-1}e_n$. But we know that $e_i = T^{i-1}e_1$, so we have
+$$T^{n}e_1 = -a_0T^0e_1 - \cdots - a_{n-1}T^{n-1}e_1 \iff (a_0I + a_1T + \cdots + a_{n-1}T^{n-1}+T^n)(e_1) = 0,$$
+so setting $\boxed{p(z) = a_0 + a_1z+\cdots + a_{n-1}z^{n-1} + z^n}$, we have $p(T)(e_1) = 0$. Now $p(T)(e_i) = p(T)(T^{i-1}e_1) = T^{i-1}(p(T)e_1) = T^{i-1}(0) = 0$, and $p$ is monic, so $p$ is both the minimal and characteristic polynomial of $T$.
+\end{solution}
+\newpage
+\subsection*{[8D] Jordan Form}
+\subsubsection*{8D.5 Matrix of $T^2$ Given Jordan Form}
+\textit{Suppose $T\in\lin(V)$ and $\{v_i\}_{i=1}^n$ is a basis for $V$ that is a Jordan basis for $T$. Describe the matrix of $T^2$ with respect to this basis.}
+\begin{solution}
+If the matrix of $T$ is $M_T = \diag(A_1, A_2,\ldots, A_m)$, then the matrix of $T^2$ can be found by simply squaring each block separately: $\boxed{M_{T^2} = \diag(A_1^2, A_2^2, \ldots, A_m^2)}$. By checking with computation, each block looks like
+$$A_j^2 = \begin{pmatrix}
+\lambda_j^2 & 2\lambda_j & 1 & \cdots & \cdots & \cdots & 0 \\
+0 & \lambda_j^2 & 2\lambda_j & 1 & \cdots & \cdots & 0\\
+0 & 0 & \lambda_j^2 & 2\lambda_j & 1 & \cdots & 0 \\
+\vdots & \ddots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+0 & \cdots & 0 & 0 & \lambda_j^2 & 2\lambda_j & 1\\
+0& \cdots & \cdots &0 & 0 & \lambda_j^2 & 2\lambda_j \\
+0 & \cdots & \cdots & \cdots & 0 & 0 & \lambda_j^2
+\end{pmatrix},$$
+with $\lambda_j^2$ on the diagonal, $2\lambda_j$ on the super-diagonal, and $1$ on the diagonal above that.
+\end{solution}
+\subsubsection*{8D.6 Basis for Kernel of Nilpotent Transformation}
+\textit{Suppose $N\in\lin(V)$ is nilpotent and $\{v_1,\ldots, v_n\}$ and $m_1,\ldots, m_n$ are as in Proposition $8.55$ in the text. Prove that $\{N^{m_j}v_j\}_{j=1}^n$ is a basis of $\ker N$.}
+\vspace{0.2 cm}
+
+\textbf{Note}: Proposition 8.55 in the text is Theorem 94.5 in these notes.
+
+\begin{proof}
+By Proposition 8.55 in the text, we know that
+\begin{equation}\label{my cool basis}
+\{N^{m_1}v_1, \ldots, v_1, \ldots, N^{m_n}v_n, v_n\}
+\end{equation}
+is a basis of $V$, and we have $N^{m_1+1}v_1 = \cdots = N^{m_n+1}v_n = 0$. By definition, the vectors $N^{m_j}v_j$, $1\leq j \leq n$ lie in $\ker N$, and they are linearly independent by the list above, so we have shown that $\dim \ker N \geq n$.  It suffices to just show that $\dim \ker N \leq n$, so $\{N^{m_j}v_j\}_{j=1}^n$ is automatically a basis for $\ker N$. We know that $N(N^kv_j) = N^{k+1}v_j$. But we also know that all of the vectors in \eqref{my cool basis} are linearly independent, and hence nonzero, and all of these vectors lie in the range of $N$:
+$$N^{m_1}v_1, \ldots, Nv_1, \ldots, N^{m_n}v_n, Nv_n.$$
+This list is linearly independent, sits inside the range, and has length $m_1 + \cdots + m_n$, so $\dim\im N \geq m_1 + \cdots + m_n$. But $\eqref{my cool basis}$ is a basis for $V$, and that list has length $m_1 + m_2 + \cdots + m_n + n$, so by Rank-Nullity, we see that
+$$\dim V = \dim\im N + \dim\ker N \iff \dim V - \dim\im N + \dim\ker N$$
+$$\implies (m_1 + m_2 + \cdots + m_n + n) - (m_1 + m_2 + \cdots + m_n) \geq \dim \ker N,$$
+so $\dim\ker N \leq n$, so that $\dim\ker N = n$ and the linearly independent list $\{N^{m_j}v_j\}_{j=1}^n\subseteq \ker N$ is a basis for $\ker N$.
+\end{proof}
+\newpage
+\subsubsection*{8D.8 When does $V$ Not Split?}
+\textit{Suppose $V$ is a complex vector space and $T\in\lin(V)$. Prove that there does not exist a direct sum decomposition of $V$ into two proper subspaces invariant under $T$ if and only if the minimal polynomial of $T$ is of the form $(z-\lambda )^{\dim V}$ for some $\lambda\in\C$.}
+
+\begin{proof}
+$(\implies)$: Suppose there does not exist a direct sum decomposition of $V$ into two proper subspaces invariant under $T$. Then after fixing a Jordan basis for $T$, we see that the matrix of $T$ consists of a single block, so it must contain one value $\lambda$ along its entire diagonal. Hence $\lambda$ is the only eigenvalue of $T$, which means that the matrix of $T$ looks like 
+$$\begin{pmatrix}
+\lambda & 1 & 0 & \cdots & \cdots & \cdots & 0 \\
+0 & \lambda & 1 & 0 &\cdots & \cdots & 0 \\
+0 & 0 & \lambda & 1 & 0 & \cdots & 0 \\
+\vdots & \ddots & \ddots & \ddots & \ddots & \ddots & \vdots \\
+0 & \cdots & 0 & 0 &  \lambda & 1& 0 \\
+0 & \cdots & \cdots & 0 & 0 & \lambda & 1 \\
+0 & \cdots & \cdots & \cdots & 0 & 0 & \lambda \\
+\end{pmatrix}.$$
+
+By multiplying, we can check that the minimal polynomial of $T$ is $(z-\lambda)^{\dim V}$.
+
+$(\impliedby)$: By contradiction, suppose that the minimal polynomial of $T$ has the form $(z-\lambda)^{\dim V}$ but there exists a direct sum decomposition of $V$ into two proper subspaces invariant under $T$, say $V = U \oplus W$ for $\dim U, \dim W \geq 1$, and both $U, W$ are invariant under $T$. (Of course, this is equivalent to saying that the Jordan form of $T$ splits into at least two blocks). Now, the characteristic polynomial of $T|_U$ is just $(z - \lambda)^{\dim U}$, as it must share the same roots as the minimal polynomial of $T$. Similarly, the characteristic polynomial of $T|_W$ is $(z-\lambda)^{\dim W}$. Without loss of generality, if $\dim U \geq \dim W$, we see that $p(z) := (z-\lambda)^{\dim U}$ satisfies $p(T) = 0$, but $\dim V > \dim U$ by assumption, so $(z-\lambda)^{\dim V}$ cannot possibly be minimal, a contradiction.
+\end{proof}
+\section*{Homework 9}
+\subsection*{[9A] Complexification}
+\subsubsection*{9A.4 Spanning Sets Are Preserved Under Complexification}
+\textit{Suppose $V$ is a real vector space and $v_1,\ldots, v_m\in V$. Prove that $\set{v_1, \ldots, v_m}$ span $V_\C$ if and only if $\set{v_1, \ldots, v_m}$ span $V$.}
+\begin{proof}
+$(\implies)$: Suppose $\{v_i\}$ spans $V_\C$. Pick $v \in V \leq V_\C$. Then because we assumed $\{v_i\}$ spans $V_\C$,
+$$v = v+0i = a_1v_1  +\cdots + a_mv_m = (\Re a_1 v_1 + \cdots + \Re a_mv_m) + (\Im a_1v_1 + \cdots + \Im a_mv_m).$$
+But by comparing components, we have written $v$ as an $\R$-linear combination of the $v_i$, so $v\in \Span_\R(v_1, \ldots, v_m)$. Hence the $v_i$ span $V$.
+
+
+$(\impliedby)$: Suppose $\{v_i\}$ spans $V$. Pick some $v +wi \in V_C$. Since $v, w\in V$, write
+$$v+wi = (a_1v_1 + \cdots + a_mv_m) + (b_1v_1 + \cdots + b_mv_m)i$$
+for appropriate $a_i, b_i\in \R$. Bringing this together gives
+$$v+wi = (a_1+b_1i)v_1 + \cdots + (a_m+b_mi)v_m,$$
+which writes $v+wi$ as a $\C$-linear combination of the $v_i$, so $v\in\Span_\C(v_1,\ldots, v_m)$, so the $v_i$ span $V_\C$.
+\end{proof}
+\subsubsection*{9A.8 The Unreal Eigenvalues of $T_\C$}
+\textit{Suppose $T\in\lin(\R^3)$ and $5, 7$ are eigenvalues of $T$. Prove that $T_\C$ has no non-real eigenvalues.}
+\begin{proof}
+We know that $T$ and $T_\C$ have the same real eigenvalues. Additionally, we know that for $T_\C$, non-real eigenvalues must come in pairs, so if $\lambda\not\in \R$ is an eigenvalue of $T_\C$, then $\bar\lambda\not\in \R$ is also an eigenvalue of $T_\C$. But this would imply that $T_\C$ and hence $T$ has 4 distinct eigenvalues: $5, 7, \lambda, \bar\lambda$, a contradiction.
+\end{proof}
+\subsection*{[10A] Trace}
+\subsubsection*{10A.16 Is the Trace Multiplicative?}
+\textit{Prove or give a counterexample: if $S,T\in\lin(V)$, then $\tr(ST) = (\tr S)(\tr T)$.}
+\begin{solution}
+This is false: take $S = T = I$. Then $\tr(I^2) = \tr(I) = 1+1=2$, but $(\tr I)^2 = 2^2 = 4\neq 2$.
+\end{solution}
+\subsection*{[10B] Determinant}
+\subsubsection*{10B.5 Is the Determinant Additive?}
+\textit{Prove or give a counterexample: if $S,T\in\lin (V)$, then $\det(S+T) = \det S + \det T$.}
+\begin{solution}
+This is false: again take $S=T=I$. Then $\det(2I) = 4$, but $2\det I = 2\neq 4$.
+\end{solution}
+\subsubsection*{10B.6 Determinant of a Block Upper-Triangular Matrix}
+\textit{Suppose $A$ is a block upper-triangular matrix $A = \diag(A_1,\ldots, A_m)$ where each $A_j$ is square. Prove that $\det A = (\det A_1)\cdots (\det A_m)$.}
+\begin{proof}
+Each block $A_j$ represents some operator on some subset of the basis of $V$. For each $A_j$, find an appropriate basis such that $A_j$ is upper triangular and $A$ remains block triangular. This turns $A$ into an upper-triangular matrix. Then the eigenvalues of the $A_j$ lie on their diagonals, and the eigenvalues of $A$ consist of all of the eigenvalues of the $A_j$, so the statement is proved.
+\end{proof}
+\end{document}
