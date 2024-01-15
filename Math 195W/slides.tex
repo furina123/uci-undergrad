@@ -1,0 +1,247 @@
+\documentclass{beamer}
+\usepackage{commands, pgfplots, subcaption} % Required for inserting images
+\usetheme{Singapore}
+\newcommand{\V}{\mathbb V}
+\newcommand{\I}{\mathbb I}
+\title{Illustrating Hilbert's Nullstellensatz}
+\author{Timothy Cho}
+\institute{UC Irvine, MATH 195}
+\date{30 November 2023}
+\begin{document}
+\maketitle
+\begin{frame}{Motivation: Why do Algebraic Geometry?}
+\pause
+\begin{itemize}
+    \item It's cool \pause
+    \item Historical: shapes/patterns $\implies$ equations \pause
+    \item Algebraic geometry: shapes/patterns $\iff$ equations \pause
+    \item Connections: analysis, topology, commutative algebra, etc.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Roots of Polynomials}
+Find the real roots of $(x^2 + 4y^2 - 4)^2 \in \R[x,y]$. \pause
+
+$$(x^2 + 4y^2 - 4)^2 = 0 \implies x^2 + 4y^2 - 4 = 0 \implies x^2 + 4y^2 = 4$$
+\pause
+\begin{center}
+\begin{tikzpicture}
+    \draw[->] (-2.5, 0) -- (2.5,0);
+    \draw[->] (0, -2) -- (0, 2);
+    \draw[very thick] (0, 0) ellipse (1 and 0.5);
+    \draw (1,0) node[anchor=north]{\,\,1};
+    \draw (0, 0.4) node[anchor=south]{\footnotesize{\,\,\,\,\,\,\,\,\,\,1/2}};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+\begin{frame}{Algebraic Varieties}
+\begin{definition}
+Let $k$ be a field, and let $S\subseteq k[x_1, \ldots, x_n]$. The \textit{algebraic variety} of $S$ is the set
+$$\V(S) := \{x\in k^n: f(x) = 0 \textsf{ for all } f\in S\}.$$
+
+Similarly, $V\subseteq k^n$ is an \textit{algebraic set} if $V = \V(S)$ for some $S\subseteq k[x_1,\ldots, x_n]$.
+\end{definition}
+\pause
+
+Advantage: points $\iff$ pictures $\iff$ shapes
+
+Disadvantages: hard to work with
+\end{frame}
+\begin{frame}{Another Example}
+Let $S = \{(x^2+y^2-4)(x-1), (x^2+y^2-4)(y-1)\}\subseteq \R[x,y]$. What is $\V(S)\subseteq \R^2$? \pause
+$$\begin{cases}
+(x^2+y^2-4)(x-1) = 0 \\
+(x^2+y^2-4)(y-1) = 0
+\end{cases}$$\pause
+$$\implies 0= (x^2+y^2-4)(x-1) = (x^2+y^2-4)(y-1)$$
+$$\implies x^2+y^2 = 4 \textsf{ or } (x,y) = (1,1)$$
+\end{frame}
+\begin{frame}{Another Example}
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+    \draw[->] (-3,0) -- (3,0);
+    \draw[->] (0,-3) -- (0,3);
+    \draw[very thick] (0,0) circle (2);
+    \filldraw[very thick] (1,1) circle (0.05);
+    \draw \xtick{1}; \draw \xtick{2};
+    \draw \ytick 1; \draw \ytick 2;
+    \draw \xtick{-1}; \draw \xtick{-2};
+    \draw\ytick{-1}; \draw\ytick{-2};
+    \draw (1, -0.2) node[anchor=north]{1};
+    \end{tikzpicture}
+    \caption{$\V\Big((x^2+y^2-4)(x-1), (x^2+ y^2-4)(y-1)\Big)$}
+    \label{myfigure}
+\end{figure}
+\end{frame}
+\begin{frame}{Ideals}
+Motivation: ``the other way around" \pause
+
+\begin{definition}
+Let $k$ be a field, and let $V\subseteq k^n$. The \textit{ideal} of $V$ to be the set
+$$\I(V) := \{f\in k[x_1,\ldots, x_n]: f(x) = 0 \textsf{ for all } x\in V\}.$$
+\end{definition}\pause
+\begin{block}{Proposition}
+Let $k$ be a field, and let $V\subseteq k^n$. Then $\I(V)$ is an ideal in $k[x_1, \ldots, x_n]$.
+\end{block}
+\pause\vspace{0.2 cm}
+
+Advantage: we understand ideals!
+\end{frame}
+\begin{frame}{Computing Ideals}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[domain=0:2, scale = 0.75]
+  \draw[black, line width = 0.50mm]   plot[smooth,domain=-2.5:2.5] (\x, 4 - \x*\x);
+  \draw[->] (-3,0) -- (3,0);
+  \draw[->] (0,-3) -- (0,4.5);
+  \draw (0,4.2) node[anchor=west]{4};
+  \draw \ytick 1; \draw\ytick 2;\draw\ytick 3; \draw\ytick{-1}; \draw\ytick{-2}; \draw\ytick{-3};
+  \draw\xtick{1};\draw\xtick{-1};
+  \draw (1.8,0) node[anchor=north]{2};
+\end{tikzpicture}
+\caption{$V\subseteq\R^2$}
+\end{figure}
+\end{column}
+\begin{column}{0.48\textwidth}
+What is $\I(V)$? \pause
+
+$$V = \{(x,y)\in\R^2: x^2+y-4=0\}.$$ \pause
+
+$f(x,y) = g(x,y)(x^2+y-4)$ vanishes for all $g(x,y)\in \R[x,y]$ \pause
+
+$$\I(V) = \gen{x^2+y-4}.$$
+\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}{$\V$ versus $\I$}
+Let $k$ be a field.
+\begin{center}
+\def\arraystretch{1.2}
+\begin{tabular}{c|c|c}
+Attribute  &  $\V$ & $\I$  \\\hline \pause
+Input & $S\subseteq k[x_1,\ldots, x_n]$ & $V\subseteq k^n$ \\ \pause
+Output & $\V(S)\subseteq k^n$ & $\I(V) \furina k[x_1, \ldots, x_n]$ \\ \pause
+Advantages & Very visual & Easy to manipulate \\ \pause
+Disadvantages & Hard to manipulate & Not visual \\
+\end{tabular}
+\end{center}\pause
+In an ideal world: $\I$ and $\V$ are mutually inverse
+\end{frame}
+\begin{frame}{$\V(\I(V)) = V$}
+\begin{block}{Proposition}
+Let $V\subseteq k^n$ be an algebraic set. Then $\V(\I(V)) = V$. That is, $\V$ is a left-inverse to $\I$.
+\end{block}
+\begin{proof}
+Definition-chase.
+\end{proof}
+\end{frame}
+\begin{frame}{$\V(\I(V)) = \V$: Example}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[domain=0:2, scale = 0.75]
+  \draw[black, line width = 0.50mm]   plot[smooth,domain=-2.5:2.5] (\x, 4 - \x*\x);
+  \draw[->] (-3,0) -- (3,0);
+  \draw[->] (0,-3) -- (0,4.5);
+  \draw (0,4.2) node[anchor=west]{4};
+  \draw \ytick 1; \draw\ytick 2;\draw\ytick 3; \draw\ytick{-1}; \draw\ytick{-2}; \draw\ytick{-3};
+  \draw\xtick{1};\draw\xtick{-1};
+  \draw (1.8,0) node[anchor=north]{2};
+\end{tikzpicture}
+\caption{$V\subseteq\R^2$}
+\end{figure}
+\end{column}
+\begin{column}{0.48\textwidth}
+Know: $I:=\I(V) = \gen{x^2+y-4}$. \\
+
+$\V(I)$: points in $\R^2$ that vanish on all of $I$ \pause --- but this is just $V$.
+\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}{$\I(\V(I))= I$?}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+    \draw[->] (-2.5, 0) -- (2.5,0);
+    \draw[->] (0, -2) -- (0, 2);
+    \draw[very thick] (0, 0) ellipse (1 and 0.5);
+    \draw (1,0) node[anchor=north]{\,\,1};
+    \draw (0, 0.4) node[anchor=south]{\footnotesize{\,\,\,\,\,\,\,\,\,\,1/2}};
+\end{tikzpicture}
+\caption{$\V(I)$}
+\end{figure}
+\end{column}
+\begin{column}{0.48\textwidth}
+Let $I:= \gen{(x^2+4y^2-4)^2}$. \pause
+
+$\I(\V(I))$: polynomials in $\R[x,y]$ that vanish on $\V(I)$
+
+$$\I(\V(I)) = \gen{x^2+4y^2-4} \neq I.$$ \pause
+
+But how are $\I(\V(I))$ and $I$ related?
+\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}{Radical of an Ideal}
+``Set of $n$th roots" \pause
+\begin{definition}
+Let $I\subseteq R$ be an ideal. Then the \textit{radical} of $I$ is the set
+$$\sqrt I:= \{r\in R: r^n\in I \textsf{ for some } n\in\Z^+\}.$$
+Similarly, we say that an ideal $I$ \textit{is radical} if $I = \sqrt I$.
+\end{definition}\pause
+\begin{block}{Proposition}
+The radical of an ideal is an ideal.
+\end{block}
+\begin{block}{Proposition}
+Prime ideals are radical.
+\end{block}
+\end{frame}
+\begin{frame}{A Rad(ical) Example}
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+    \draw[->] (-2.5, 0) -- (2.5,0);
+    \draw[->] (0, -2) -- (0, 2);
+    \draw[very thick] (0, 0) ellipse (1 and 0.5);
+    \draw (1,0) node[anchor=north]{\,\,1};
+    \draw (0, 0.4) node[anchor=south]{\footnotesize{\,\,\,\,\,\,\,\,\,\,1/2}};
+\end{tikzpicture}
+\caption{$\V(I)$}
+\end{figure}
+\end{column}
+\begin{column}{0.48\textwidth}
+Let $I:= \gen{(x^2+4y^2-4)^2}$.
+$$\I(\V(I)) = \gen{x^2+4y^2-4}.$$ \pause
+
+But how are $\I(\V(I))$ and $I$ related? \pause
+$$\boxed{\I(\V(I)) = \sqrt I}$$
+\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}{The Nullstellensatz}
+\begin{theorem}[Hilbert's Nullstellensatz]
+Let $k$ be an algebraically closed field, and let $I\furina k[x_1,\ldots, x_n]$. Then $\I(\V(I)) = \sqrt I$. In particular, if $I$ is radical, then $\I(\V(I)) = I$.
+\end{theorem}\pause
+Restricting to the set of radical ideals:
+$$\Big\{\textsf{algebraic sets in } k^n\Big\} \longleftrightarrow \Big\{\textsf{radical ideals of } k[x_1,\ldots, x_n]\Big\}$$\pause
+
+The field $k$ \textbf{must} be algebraically closed!
+\end{frame}
+\begin{frame}{The Nullstellensatz, Applications}
+\begin{itemize}
+    \item ``Fundamental theorem of algebraic geometry" \pause
+    \item Nullstellensatz: Shapes $\implies$ abstraction
+    \item Abstraction good: equations $\iff$ shapes \pause
+    \item Curves in weird fields: $\overline{\F_2}$, etc.
+    \item Elliptic curves, number theory, FLT, etc.
+\end{itemize}
+\end{frame}
+\end{document}
